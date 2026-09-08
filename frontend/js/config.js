@@ -3,7 +3,7 @@
 const API_BASE = (() => {
   const h = window.location.hostname;
   if (h === "localhost" || h === "127.0.0.1") return "http://localhost:5055";
-  return "https://libraryos-api.onrender.com";
+  return "https://libraryos-api-ugsj.onrender.com";
 })();
 
 function getToken() { return localStorage.getItem("lo_token"); }
