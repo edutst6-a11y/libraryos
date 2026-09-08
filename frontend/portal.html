@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LibraryOS &mdash; My Membership</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Sora:wght@600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/css/style.css">
+<link rel="stylesheet" href="/css/portal.css">
+</head>
+<body class="portal-body">
+
+<header class="portal-topbar">
+  <div class="portal-brand"><div class="brand-mark">L</div> LibraryOS</div>
+  <button class="btn-ghost" id="logout-btn" style="color:#14314f; border-color:#d8dee8;">Log out</button>
+</header>
+
+<main class="portal-main">
+  <div class="membership-card" id="membership-card">
+    <div class="mc-top">
+      <div>
+        <div class="mc-label">Library Member</div>
+        <div class="mc-name" id="mc-name">&hellip;</div>
+      </div>
+      <div class="mc-chip">&#9673;</div>
+    </div>
+    <div class="mc-number" id="mc-number">LIB-000000</div>
+    <div class="mc-bottom">
+      <div><span class="mc-field-label">Type</span><div id="mc-type">&mdash;</div></div>
+      <div><span class="mc-field-label">Branch</span><div id="mc-branch">&mdash;</div></div>
+      <div><span class="mc-field-label">Member Since</span><div id="mc-since">&mdash;</div></div>
+    </div>
+  </div>
+
+  <div id="welcome-note" class="welcome-note" hidden>
+    &#127881; Welcome to LibraryOS! Your membership was created just now &mdash; the card above is yours.
+  </div>
+
+  <div class="portal-grid">
+    <div class="panel">
+      <div class="panel-title">My Loans</div>
+      <div class="panel-sub">Active and past loans on your account</div>
+      <div class="table-wrap"><table class="data-table">
+        <thead><tr><th>Book</th><th>Loan Date</th><th>Due Date</th><th>Status</th></tr></thead>
+        <tbody id="tbody-loans"><tr class="loading-row"><td colspan="4">Loading&hellip;</td></tr></tbody>
+      </table></div>
+    </div>
+
+    <div class="panel">
+      <div class="panel-title">My Fines</div>
+      <div class="panel-sub">Outstanding and past fines</div>
+      <div class="table-wrap"><table class="data-table">
+        <thead><tr><th>Book</th><th>Amount</th><th>Reason</th><th>Status</th></tr></thead>
+        <tbody id="tbody-fines"><tr class="loading-row"><td colspan="4">Loading&hellip;</td></tr></tbody>
+      </table></div>
+    </div>
+  </div>
+
+  <div class="panel">
+    <div class="panel-title">Browse the Catalogue</div>
+    <div class="panel-sub">Search what's available across every branch</div>
+    <div class="controls-row">
+      <input class="input" id="books-q" placeholder="Search title or author…">
+      <select class="select" id="books-genre"><option value="">All genres</option></select>
+    </div>
+    <div class="table-wrap"><table class="data-table">
+      <thead><tr><th>Title</th><th>Author</th><th>Genre</th><th>Branch</th><th>Available</th></tr></thead>
+      <tbody id="tbody-books"></tbody>
+    </table></div>
+    <div class="pagination" id="pag-books"></div>
+  </div>
+</main>
+
+<script src="/js/config.js"></script>
+<script src="/js/tilt3d.js"></script>
+<script src="/js/portal.js"></script>
+</body>
+</html>

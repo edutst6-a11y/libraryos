@@ -1,0 +1,807 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Library Management and Usage Analytics - Project Report</title>
+<style>
+  @page { size: A4; margin: 2.2cm 2.2cm 2.2cm 2.2cm; }
+  body {
+    font-family: "Liberation Serif", "Times New Roman", Georgia, serif;
+    font-size: 12pt;
+    line-height: 1.5;
+    color: #1a1a1a;
+    margin: 0;
+  }
+  .cover { text-align: center; padding-top: 30px; }
+  .cover .school { font-family: "Liberation Sans", Arial, sans-serif; font-size: 12pt; color: #444; margin-top: 14px; }
+  .cover .title { font-size: 23pt; font-weight: bold; margin-top: 55px; }
+  .cover .subtitle { font-size: 14pt; color: #333; margin-top: 8px; }
+  .cover .doctype { margin-top: 40px; font-size: 13pt; font-style: italic; }
+  .cover .datebox { margin-top: 30px; font-family: "Liberation Sans", Arial, sans-serif; font-size: 11pt; color: #333; }
+  table.members { margin: 26px auto 0 auto; border-collapse: collapse; font-family: "Liberation Sans", Arial, sans-serif; font-size: 11pt; }
+  h1 {
+    font-family: "Liberation Sans", Arial, sans-serif; font-size: 18pt; color: #14314f;
+    border-bottom: 2px solid #14314f; padding-bottom: 6px; margin-top: 0; page-break-before: always;
+  }
+  h2 { font-family: "Liberation Sans", Arial, sans-serif; font-size: 14pt; color: #14314f; margin-top: 26px; margin-bottom: 8px; }
+  h3 { font-family: "Liberation Sans", Arial, sans-serif; font-size: 12pt; color: #333; margin-top: 18px; margin-bottom: 6px; }
+  p { text-align: justify; margin: 8px 0; }
+  ul, ol { margin: 8px 0; padding-left: 24px; }
+  li { margin-bottom: 4px; }
+  code, .mono { font-family: "Liberation Mono", Consolas, monospace; font-size: 9.5pt; background: #f0f0f0; padding: 1px 4px; border-radius: 2px; }
+  pre.sql {
+    font-family: "Liberation Mono", Consolas, monospace; font-size: 9pt; background: #f5f6f8;
+    border: 1px solid #ccc; border-radius: 4px; padding: 10px 12px; white-space: pre-wrap;
+    page-break-inside: avoid; line-height: 1.35;
+  }
+  .toc-list { list-style: none; padding-left: 0; }
+  .toc-list li { margin: 5px 0; font-family: "Liberation Sans", Arial, sans-serif; font-size: 11pt; }
+  .note {
+    border-left: 4px solid #b8860b; background: #fff8e6; padding: 8px 12px; font-size: 10.5pt; margin: 10px 0;
+  }
+  .figure { text-align: center; margin: 16px 0; page-break-inside: avoid; }
+  .figure img { max-width: 100%; border: 1px solid #ddd; }
+  .figure .caption { font-family: "Liberation Sans", Arial, sans-serif; font-size: 10pt; color: #555; margin-top: 6px; }
+  .qbox { margin: 14px 0 18px 0; page-break-inside: avoid; }
+  .qtitle { font-family: "Liberation Sans", Arial, sans-serif; font-weight: bold; font-size: 11pt; color: #14314f; margin-bottom: 3px; }
+  .qconcepts { font-family: "Liberation Sans", Arial, sans-serif; font-size: 9.5pt; color: #8a5a00; margin-bottom: 4px; font-style: italic; }
+</style>
+</head>
+<body>
+
+<!-- ============ COVER PAGE ============ -->
+<div class="cover">
+  <img src="unilus_logo.png" alt="University logo" style="display:block; margin:0 auto; width:300px;">
+  <div class="school">Big Data &ndash; Mid-Semester Project</div>
+
+  <div class="title">Design and Development of a SQL-Based<br>Big Data Analytics System</div>
+  <div class="subtitle">Application Area: Library Management and Usage Analytics</div>
+
+  <div class="doctype">Group Project Submission</div>
+
+  <table class="members">
+    <tr>
+      <th style="border:1px solid #333333; background-color:#eeeeee; padding:8px 20px; text-align:left; font-family:'Liberation Sans',Arial,sans-serif; font-size:11pt;">Full Name</th>
+      <th style="border:1px solid #333333; background-color:#eeeeee; padding:8px 20px; text-align:left; font-family:'Liberation Sans',Arial,sans-serif; font-size:11pt;">Student ID</th>
+    </tr>
+    <tr><td style="border:1px solid #333333; padding:10px 20px; font-family:'Liberation Sans',Arial,sans-serif; font-size:11pt; min-width:200px;">&nbsp;</td><td style="border:1px solid #333333; padding:10px 20px; font-family:'Liberation Sans',Arial,sans-serif; font-size:11pt; min-width:140px;">&nbsp;</td></tr>
+    <tr><td style="border:1px solid #333333; padding:10px 20px; font-family:'Liberation Sans',Arial,sans-serif; font-size:11pt;">&nbsp;</td><td style="border:1px solid #333333; padding:10px 20px; font-family:'Liberation Sans',Arial,sans-serif; font-size:11pt;">&nbsp;</td></tr>
+    <tr><td style="border:1px solid #333333; padding:10px 20px; font-family:'Liberation Sans',Arial,sans-serif; font-size:11pt;">&nbsp;</td><td style="border:1px solid #333333; padding:10px 20px; font-family:'Liberation Sans',Arial,sans-serif; font-size:11pt;">&nbsp;</td></tr>
+    <tr><td style="border:1px solid #333333; padding:10px 20px; font-family:'Liberation Sans',Arial,sans-serif; font-size:11pt;">&nbsp;</td><td style="border:1px solid #333333; padding:10px 20px; font-family:'Liberation Sans',Arial,sans-serif; font-size:11pt;">&nbsp;</td></tr>
+    <tr><td style="border:1px solid #333333; padding:10px 20px; font-family:'Liberation Sans',Arial,sans-serif; font-size:11pt;">&nbsp;</td><td style="border:1px solid #333333; padding:10px 20px; font-family:'Liberation Sans',Arial,sans-serif; font-size:11pt;">&nbsp;</td></tr>
+  </table>
+
+  <div class="datebox">Submission date: 8 September 2026</div>
+</div>
+
+<!-- ============ TOC ============ -->
+<h1>Table of Contents</h1>
+<ul class="toc-list">
+  <li>1. Introduction</li>
+  <li>2. Problem Statement</li>
+  <li>3. Project Objectives</li>
+  <li>4. Organisation / System Description</li>
+  <li>5. Database Design</li>
+  <li>6. Entity Relationship Diagram</li>
+  <li>7. SQL Table Creation</li>
+  <li>8. Data Population</li>
+  <li>9. SQL Queries</li>
+  <li>10. Query Results and Analysis</li>
+  <li>11. Big Data Architecture</li>
+  <li>12. Big Data Scalability</li>
+  <li>13. Data Visualisations</li>
+  <li>14. Findings</li>
+  <li>15. Recommendations</li>
+  <li>16. Conclusion</li>
+</ul>
+
+<!-- ============ 1 ============ -->
+<h1>1. Introduction</h1>
+<p>
+For this project we designed and built a SQL-based analytics system for a
+library service, covering everything from the relational database itself
+through to what it would take to grow that database into a full Big Data
+platform. We picked <b>Library Management and Usage Analytics</b> as our
+application area.
+</p>
+<p>
+Concretely, we built: a 10-table relational schema in PostgreSQL, a
+realistic dataset of just under 1,000 records populated across those
+tables, 20 SQL queries answering real questions a library would actually
+ask, an Entity Relationship Diagram, a proposed Big Data architecture for
+when the library's data outgrows a single SQL database, and four data
+visualisations built directly from our own query results. This report
+walks through each of those in turn, and closes with what we actually
+found in the data and what we'd recommend doing about it.
+</p>
+
+<!-- ============ 2 ============ -->
+<h1>2. Problem Statement</h1>
+<p>
+A public library system generates far more data than it usually gets
+credit for: every checkout, every return, every reservation, every fine,
+across every branch. Run on paper cards or a spreadsheet, none of that
+data is actually usable &ndash; nobody can quickly answer "which books are
+most popular," "which branch is busiest," or "who still owes us money."
+</p>
+<p>
+The organisation we modelled is a small public library network with four
+branches, each with its own staff, its own share of the catalogue, and its
+own members. The problem it needs solved: a proper database to run day-to-
+day circulation on, and a way to turn the data that database accumulates
+into answers the library can actually act on &ndash; which titles to buy
+more copies of, which branches need more staff, and how much revenue is
+sitting uncollected in unpaid fines.
+</p>
+<p>
+The organisation generates transactional data (loans, returns, fines,
+reservations) and catalogue/member data (books, authors, members, staff)
+continuously, every single day the library is open, across every branch at
+once &ndash; which is exactly the kind of data a relational database, and
+eventually a Big Data pipeline behind it, is meant for.
+</p>
+
+<!-- ============ 3 ============ -->
+<h1>3. Project Objectives</h1>
+<ul>
+  <li>Design a normalised relational database that reflects how a real library actually operates, not a toy example.</li>
+  <li>Populate it with a realistic volume of data, including believable patterns (some books get borrowed far more than others, some branches collect more in fines, etc.) rather than uniformly random numbers.</li>
+  <li>Write SQL queries that answer real operational and management questions, covering every SQL concept the module has covered.</li>
+  <li>Design an Entity Relationship Diagram that documents the schema clearly.</li>
+  <li>Propose a Big Data architecture showing how this system would need to evolve if the library's data grew from thousands of records to millions or billions.</li>
+  <li>Turn our own query results into visualisations that actually communicate something, not just decorative charts.</li>
+  <li>Pull it all together into findings and recommendations grounded in the data we generated, not generic statements.</li>
+</ul>
+
+<!-- ============ 4 ============ -->
+<h1>4. Organisation / System Description</h1>
+<p>
+We modelled a four-branch public library network &ndash; Central Library,
+Northmead Branch, Kitwe Branch, and Ndola Branch &ndash; each with its own
+staff and its own local share of the book catalogue, but all sharing one
+member base: a member registered at any branch can, in principle, be
+served by the whole network.
+</p>
+<p>
+Four roles interact with the system:
+</p>
+<ul>
+  <li><b>Members</b> &ndash; the patrons who borrow, return, and occasionally reserve books.</li>
+  <li><b>Staff</b> &ndash; librarians, assistant librarians, branch managers and IT support, each attached to one branch, who process every loan.</li>
+  <li><b>The catalogue side</b> &ndash; authors, publishers and genres, which together describe every book the library holds.</li>
+  <li><b>Management</b> &ndash; the people who'd actually read the reports this system produces, deciding what to buy more of and where to put resources.</li>
+</ul>
+<p>
+The data this organisation generates falls into two categories: relatively
+stable <b>reference data</b> (authors, publishers, genres, branches, staff,
+the book catalogue itself) that changes slowly, and fast-growing
+<b>transactional data</b> (loans, fines, reservations) that accumulates
+every single day the library operates. It's that second category that
+eventually forces the Big Data conversation in Section 12 &ndash; a
+four-branch library doing a few hundred loans a day, every day, for years,
+adds up fast.
+</p>
+
+<!-- ============ 5 ============ -->
+<h1>5. Database Design</h1>
+<p>
+We ended up with 10 related tables &ndash; well past the minimum of 6
+&ndash; split roughly into reference tables and transactional tables:
+</p>
+<table class="data">
+  <tr><th style="border:1px solid #888888; background-color:#dfe7ef; padding:6px 8px; font-family:'Liberation Sans',Arial,sans-serif; text-align:left; font-size:10.5pt; width:20%;">Table</th><th style="border:1px solid #888888; background-color:#dfe7ef; padding:6px 8px; font-family:'Liberation Sans',Arial,sans-serif; text-align:left; font-size:10.5pt; width:14%;">Type</th><th style="border:1px solid #888888; background-color:#dfe7ef; padding:6px 8px; font-family:'Liberation Sans',Arial,sans-serif; text-align:left; font-size:10.5pt;">What it holds</th></tr>
+  <tr><td style="border:1px solid #888888; padding:6px 8px; font-size:10.5pt;">branches</td><td style="border:1px solid #888888; padding:6px 8px; font-size:10.5pt;">Reference</td><td style="border:1px solid #888888; padding:6px 8px; font-size:10.5pt;">The four physical library locations.</td></tr>
+  <tr><td style="border:1px solid #888888; padding:6px 8px; font-size:10.5pt;">staff</td><td style="border:1px solid #888888; padding:6px 8px; font-size:10.5pt;">Reference</td><td style="border:1px solid #888888; padding:6px 8px; font-size:10.5pt;">Employees, each tied to one branch.</td></tr>
+  <tr><td style="border:1px solid #888888; padding:6px 8px; font-size:10.5pt;">authors</td><td style="border:1px solid #888888; padding:6px 8px; font-size:10.5pt;">Reference</td><td style="border:1px solid #888888; padding:6px 8px; font-size:10.5pt;">Book authors and their nationality/birth year.</td></tr>
+  <tr><td style="border:1px solid #888888; padding:6px 8px; font-size:10.5pt;">publishers</td><td style="border:1px solid #888888; padding:6px 8px; font-size:10.5pt;">Reference</td><td style="border:1px solid #888888; padding:6px 8px; font-size:10.5pt;">Publishing houses.</td></tr>
+  <tr><td style="border:1px solid #888888; padding:6px 8px; font-size:10.5pt;">genres</td><td style="border:1px solid #888888; padding:6px 8px; font-size:10.5pt;">Reference</td><td style="border:1px solid #888888; padding:6px 8px; font-size:10.5pt;">The 14 genre categories in the catalogue.</td></tr>
+  <tr><td style="border:1px solid #888888; padding:6px 8px; font-size:10.5pt;">books</td><td style="border:1px solid #888888; padding:6px 8px; font-size:10.5pt;">Reference</td><td style="border:1px solid #888888; padding:6px 8px; font-size:10.5pt;">The catalogue: one row per title, linked to its author, publisher, genre and home branch.</td></tr>
+  <tr><td style="border:1px solid #888888; padding:6px 8px; font-size:10.5pt;">members</td><td style="border:1px solid #888888; padding:6px 8px; font-size:10.5pt;">Reference</td><td style="border:1px solid #888888; padding:6px 8px; font-size:10.5pt;">Registered library patrons.</td></tr>
+  <tr><td style="border:1px solid #888888; padding:6px 8px; font-size:10.5pt;"><b>loans</b></td><td style="border:1px solid #888888; padding:6px 8px; font-size:10.5pt;"><b>Transactional</b></td><td style="border:1px solid #888888; padding:6px 8px; font-size:10.5pt;">Every borrow event &ndash; the main table the whole system revolves around.</td></tr>
+  <tr><td style="border:1px solid #888888; padding:6px 8px; font-size:10.5pt;"><b>fines</b></td><td style="border:1px solid #888888; padding:6px 8px; font-size:10.5pt;"><b>Transactional</b></td><td style="border:1px solid #888888; padding:6px 8px; font-size:10.5pt;">Fines raised against a loan, for being overdue, lost, or damaged.</td></tr>
+  <tr><td style="border:1px solid #888888; padding:6px 8px; font-size:10.5pt;"><b>reservations</b></td><td style="border:1px solid #888888; padding:6px 8px; font-size:10.5pt;"><b>Transactional</b></td><td style="border:1px solid #888888; padding:6px 8px; font-size:10.5pt;">A member reserving a title that's currently out.</td></tr>
+</table>
+<p>
+Every table has a proper primary key, and every relationship between
+tables is enforced with a foreign key &ndash; nothing is left to
+application-level trust. We also added CHECK constraints wherever a column
+should only ever hold one of a fixed set of values (a loan's
+<span class="mono">status</span>, a fine's <span class="mono">reason</span>,
+a member's <span class="mono">membership_type</span>, and so on), and a
+handful of logical constraints that don't fit a simple column check &ndash;
+for instance, <span class="mono">available_copies</span> can never exceed
+<span class="mono">total_copies</span>, and a loan's
+<span class="mono">due_date</span> can never fall before its
+<span class="mono">loan_date</span>. We indexed every foreign key column
+and the date columns on <span class="mono">loans</span>, since those are
+exactly the columns our analytics queries in Section 9 filter and join on
+most heavily.
+</p>
+
+<!-- ============ 6 ============ -->
+<h1>6. Entity Relationship Diagram</h1>
+<p>
+The diagram below shows all 10 tables, their primary and foreign keys, and
+the cardinality of every relationship between them.
+</p>
+<div class="figure">
+  <img src="library_erd.png" alt="Entity Relationship Diagram" style="width:620px;">
+  <div class="caption">Figure 1. Entity Relationship Diagram for the library schema.</div>
+</div>
+
+<!-- ============ 7 ============ -->
+<h1>7. SQL Table Creation</h1>
+<p>
+The full schema is in <span class="mono">sql/01_schema.sql</span>, submitted
+alongside this report. Two representative tables are shown below &ndash;
+<span class="mono">books</span>, which carries most of the catalogue's
+foreign keys, and <span class="mono">loans</span>, the central
+transactional table everything else in the analysis hangs off:
+</p>
+<pre style="font-family:'Liberation Mono',Consolas,monospace; font-size:9pt; background:#f5f6f8; border:1px solid #ccc; border-radius:4px; padding:10px 12px; white-space:pre-wrap; line-height:1.3; margin:6px 0;">CREATE TABLE books (
+    book_id         SERIAL PRIMARY KEY,
+    isbn            VARCHAR(20) NOT NULL UNIQUE,
+    title           VARCHAR(200) NOT NULL,
+    author_id       INT NOT NULL REFERENCES authors(author_id),
+    publisher_id    INT NOT NULL REFERENCES publishers(publisher_id),
+    genre_id        INT NOT NULL REFERENCES genres(genre_id),
+    branch_id       INT NOT NULL REFERENCES branches(branch_id),
+    publication_year INT NOT NULL CHECK (publication_year BETWEEN 1500 AND 2026),
+    total_copies    INT NOT NULL CHECK (total_copies &gt;= 0),
+    available_copies INT NOT NULL CHECK (available_copies &gt;= 0),
+    price           NUMERIC(8,2) NOT NULL CHECK (price &gt;= 0),
+    CHECK (available_copies &lt;= total_copies)
+);
+
+CREATE TABLE loans (
+    loan_id         SERIAL PRIMARY KEY,
+    book_id         INT NOT NULL REFERENCES books(book_id),
+    member_id       INT NOT NULL REFERENCES members(member_id),
+    staff_id        INT NOT NULL REFERENCES staff(staff_id),
+    loan_date       DATE NOT NULL,
+    due_date        DATE NOT NULL,
+    return_date     DATE,
+    status          VARCHAR(20) NOT NULL CHECK (status IN ('Borrowed','Returned','Overdue','Lost')),
+    CHECK (due_date &gt;= loan_date),
+    CHECK (return_date IS NULL OR return_date &gt;= loan_date)
+);</pre>
+<p>
+We also indexed every foreign key and the date columns on
+<span class="mono">loans</span>, since the analytics queries in Section 9
+filter and join on exactly those columns:
+</p>
+<pre style="font-family:'Liberation Mono',Consolas,monospace; font-size:9pt; background:#f5f6f8; border:1px solid #ccc; border-radius:4px; padding:10px 12px; white-space:pre-wrap; line-height:1.3; margin:6px 0;">CREATE INDEX idx_loans_book   ON loans(book_id);
+CREATE INDEX idx_loans_member ON loans(member_id);
+CREATE INDEX idx_loans_dates  ON loans(loan_date, due_date, return_date);
+CREATE INDEX idx_books_genre  ON books(genre_id);
+-- (and equivalent indexes on the remaining foreign keys)</pre>
+
+<!-- ============ 8 ============ -->
+<h1>8. Data Population</h1>
+<p>
+We didn't hand-type the data &ndash; we wrote a small Python script
+(<span class="mono">scripts/generate_seed_data.py</span>, also submitted)
+that generates it and writes it out as plain SQL <span class="mono">INSERT</span>
+statements, so the actual seed script is still just SQL, reviewable like
+any other part of the submission. The script runs with a fixed random seed,
+so the same data comes out every time it's re-run.
+</p>
+<p>
+We deliberately didn't make the data uniformly random. Some books are
+weighted to be borrowed far more often than others, some genres have more
+titles than others, and loan activity in the most recent two weeks is
+boosted so the "currently on loan" picture looks like an actual library
+snapshot rather than a handful of stray records &ndash; all so the queries
+in the next section would have real patterns to find instead of flat noise.
+</p>
+<table class="data">
+  <tr><th style="border:1px solid #888888; background-color:#dfe7ef; padding:6px 8px; font-family:'Liberation Sans',Arial,sans-serif; text-align:left; font-size:10.5pt;">Table</th><th style="border:1px solid #888888; background-color:#dfe7ef; padding:6px 8px; font-family:'Liberation Sans',Arial,sans-serif; text-align:left; font-size:10.5pt;">Rows</th></tr>
+  <tr><td style="border:1px solid #888888; padding:6px 8px; font-size:10.5pt;">branches</td><td style="border:1px solid #888888; padding:6px 8px; font-size:10.5pt;">4</td></tr>
+  <tr><td style="border:1px solid #888888; padding:6px 8px; font-size:10.5pt;">staff</td><td style="border:1px solid #888888; padding:6px 8px; font-size:10.5pt;">14</td></tr>
+  <tr><td style="border:1px solid #888888; padding:6px 8px; font-size:10.5pt;">authors</td><td style="border:1px solid #888888; padding:6px 8px; font-size:10.5pt;">41</td></tr>
+  <tr><td style="border:1px solid #888888; padding:6px 8px; font-size:10.5pt;">publishers</td><td style="border:1px solid #888888; padding:6px 8px; font-size:10.5pt;">15</td></tr>
+  <tr><td style="border:1px solid #888888; padding:6px 8px; font-size:10.5pt;">genres</td><td style="border:1px solid #888888; padding:6px 8px; font-size:10.5pt;">14</td></tr>
+  <tr><td style="border:1px solid #888888; padding:6px 8px; font-size:10.5pt;">books</td><td style="border:1px solid #888888; padding:6px 8px; font-size:10.5pt;">150</td></tr>
+  <tr><td style="border:1px solid #888888; padding:6px 8px; font-size:10.5pt;">members</td><td style="border:1px solid #888888; padding:6px 8px; font-size:10.5pt;">130</td></tr>
+  <tr><td style="border:1px solid #888888; padding:6px 8px; font-size:10.5pt;"><b>loans</b></td><td style="border:1px solid #888888; padding:6px 8px; font-size:10.5pt;"><b>460</b></td></tr>
+  <tr><td style="border:1px solid #888888; padding:6px 8px; font-size:10.5pt;">fines</td><td style="border:1px solid #888888; padding:6px 8px; font-size:10.5pt;">98</td></tr>
+  <tr><td style="border:1px solid #888888; padding:6px 8px; font-size:10.5pt;">reservations</td><td style="border:1px solid #888888; padding:6px 8px; font-size:10.5pt;">70</td></tr>
+  <tr><td style="border:1px solid #888888; padding:6px 8px; font-size:10.5pt;"><b>Total</b></td><td style="border:1px solid #888888; padding:6px 8px; font-size:10.5pt;"><b>996</b></td></tr>
+</table>
+<p>
+That comfortably clears the "at least 100 records across the major
+transactional tables" requirement on its own &ndash; <span class="mono">loans</span>
+alone has 460 rows, and the loans/fines/reservations total is 628.
+</p>
+
+<!-- ============ 9 ============ -->
+<h1>9. SQL Queries</h1>
+<p>
+We wrote 20 queries in total &ndash; five more than the required minimum
+&ndash; deliberately covering every concept the brief lists at least once,
+plus a window function as the "other relevant technique." The full,
+runnable script is <span class="mono">sql/03_queries.sql</span>. Below is
+every query with the real business question it answers; actual results and
+what they show are discussed in Section 10.
+</p>
+
+<div class="qbox">
+  <div class="qtitle">Q1. Which books belong to the "Science Fiction" genre?</div>
+  <div class="qconcepts">SELECT, WHERE, JOIN, ORDER BY</div>
+  <pre style="font-family:'Liberation Mono',Consolas,monospace; font-size:9pt; background:#f5f6f8; border:1px solid #ccc; border-radius:4px; padding:10px 12px; white-space:pre-wrap; line-height:1.3; margin:6px 0;">SELECT b.title, b.publication_year, a.full_name AS author, b.available_copies
+FROM books b
+JOIN authors a ON a.author_id = b.author_id
+JOIN genres g ON g.genre_id = b.genre_id
+WHERE g.genre_name = 'Science Fiction'
+ORDER BY b.publication_year DESC;</pre>
+</div>
+
+<div class="qbox">
+  <div class="qtitle">Q2. Who are the 15 most recently joined members?</div>
+  <div class="qconcepts">SELECT, ORDER BY, LIMIT</div>
+  <pre style="font-family:'Liberation Mono',Consolas,monospace; font-size:9pt; background:#f5f6f8; border:1px solid #ccc; border-radius:4px; padding:10px 12px; white-space:pre-wrap; line-height:1.3; margin:6px 0;">SELECT member_id, full_name, membership_type, join_date
+FROM members
+ORDER BY join_date DESC
+LIMIT 15;</pre>
+</div>
+
+<div class="qbox">
+  <div class="qtitle">Q3. How many loans has each branch processed?</div>
+  <div class="qconcepts">JOIN, GROUP BY, COUNT, ORDER BY</div>
+  <pre style="font-family:'Liberation Mono',Consolas,monospace; font-size:9pt; background:#f5f6f8; border:1px solid #ccc; border-radius:4px; padding:10px 12px; white-space:pre-wrap; line-height:1.3; margin:6px 0;">SELECT br.branch_name, COUNT(l.loan_id) AS total_loans
+FROM branches br
+JOIN staff s ON s.branch_id = br.branch_id
+JOIN loans l ON l.staff_id = s.staff_id
+GROUP BY br.branch_name
+ORDER BY total_loans DESC;</pre>
+</div>
+
+<div class="qbox">
+  <div class="qtitle">Q4. What is the total value of fines collected (paid) so far?</div>
+  <div class="qconcepts">SUM, WHERE</div>
+  <pre style="font-family:'Liberation Mono',Consolas,monospace; font-size:9pt; background:#f5f6f8; border:1px solid #ccc; border-radius:4px; padding:10px 12px; white-space:pre-wrap; line-height:1.3; margin:6px 0;">SELECT SUM(amount) AS total_fines_collected
+FROM fines
+WHERE status = 'Paid';</pre>
+</div>
+
+<div class="qbox">
+  <div class="qtitle">Q5. How many books does the library hold in each genre?</div>
+  <div class="qconcepts">GROUP BY, COUNT, JOIN, ORDER BY</div>
+  <pre style="font-family:'Liberation Mono',Consolas,monospace; font-size:9pt; background:#f5f6f8; border:1px solid #ccc; border-radius:4px; padding:10px 12px; white-space:pre-wrap; line-height:1.3; margin:6px 0;">SELECT g.genre_name, COUNT(b.book_id) AS number_of_titles, SUM(b.total_copies) AS total_physical_copies
+FROM genres g
+LEFT JOIN books b ON b.genre_id = g.genre_id
+GROUP BY g.genre_name
+ORDER BY number_of_titles DESC;</pre>
+</div>
+
+<div class="qbox">
+  <div class="qtitle">Q6. Which genres have more than 10 titles in the catalogue?</div>
+  <div class="qconcepts">GROUP BY, HAVING</div>
+  <pre style="font-family:'Liberation Mono',Consolas,monospace; font-size:9pt; background:#f5f6f8; border:1px solid #ccc; border-radius:4px; padding:10px 12px; white-space:pre-wrap; line-height:1.3; margin:6px 0;">SELECT g.genre_name, COUNT(b.book_id) AS number_of_titles
+FROM genres g
+JOIN books b ON b.genre_id = g.genre_id
+GROUP BY g.genre_name
+HAVING COUNT(b.book_id) > 10
+ORDER BY number_of_titles DESC;</pre>
+</div>
+
+<div class="qbox">
+  <div class="qtitle">Q7. Full catalogue listing with author, publisher and genre</div>
+  <div class="qconcepts">Multi-table JOIN, ORDER BY</div>
+  <pre style="font-family:'Liberation Mono',Consolas,monospace; font-size:9pt; background:#f5f6f8; border:1px solid #ccc; border-radius:4px; padding:10px 12px; white-space:pre-wrap; line-height:1.3; margin:6px 0;">SELECT b.title, a.full_name AS author, p.publisher_name, g.genre_name, b.publication_year
+FROM books b
+JOIN authors a     ON a.author_id = b.author_id
+JOIN publishers p  ON p.publisher_id = b.publisher_id
+JOIN genres g      ON g.genre_id = b.genre_id
+ORDER BY b.title
+LIMIT 25;</pre>
+</div>
+
+<div class="qbox">
+  <div class="qtitle">Q8. Full loan history: who currently has what, from which branch</div>
+  <div class="qconcepts">Multi-table JOIN, WHERE, ORDER BY</div>
+  <pre style="font-family:'Liberation Mono',Consolas,monospace; font-size:9pt; background:#f5f6f8; border:1px solid #ccc; border-radius:4px; padding:10px 12px; white-space:pre-wrap; line-height:1.3; margin:6px 0;">SELECT m.full_name AS member, b.title AS book, br.branch_name,
+       l.loan_date, l.due_date, l.return_date, l.status
+FROM loans l
+JOIN members m  ON m.member_id = l.member_id
+JOIN books b    ON b.book_id = l.book_id
+JOIN staff s    ON s.staff_id = l.staff_id
+JOIN branches br ON br.branch_id = s.branch_id
+WHERE l.status = 'Borrowed'
+ORDER BY l.loan_date DESC
+LIMIT 25;</pre>
+</div>
+
+<div class="qbox">
+  <div class="qtitle">Q9. Top 10 most borrowed books of all time</div>
+  <div class="qconcepts">JOIN, GROUP BY, COUNT, ORDER BY, LIMIT</div>
+  <pre style="font-family:'Liberation Mono',Consolas,monospace; font-size:9pt; background:#f5f6f8; border:1px solid #ccc; border-radius:4px; padding:10px 12px; white-space:pre-wrap; line-height:1.3; margin:6px 0;">SELECT b.title, a.full_name AS author, COUNT(l.loan_id) AS times_borrowed
+FROM loans l
+JOIN books b   ON b.book_id = l.book_id
+JOIN authors a ON a.author_id = b.author_id
+GROUP BY b.title, a.full_name
+ORDER BY times_borrowed DESC
+LIMIT 10;</pre>
+</div>
+
+<div class="qbox">
+  <div class="qtitle">Q10. Top 10 most active members by number of loans</div>
+  <div class="qconcepts">JOIN, GROUP BY, COUNT, ORDER BY, LIMIT</div>
+  <pre style="font-family:'Liberation Mono',Consolas,monospace; font-size:9pt; background:#f5f6f8; border:1px solid #ccc; border-radius:4px; padding:10px 12px; white-space:pre-wrap; line-height:1.3; margin:6px 0;">SELECT m.full_name, m.membership_type, COUNT(l.loan_id) AS total_loans
+FROM members m
+JOIN loans l ON l.member_id = m.member_id
+GROUP BY m.full_name, m.membership_type
+ORDER BY total_loans DESC
+LIMIT 10;</pre>
+</div>
+
+<div class="qbox">
+  <div class="qtitle">Q11. Members who have never borrowed a single book</div>
+  <div class="qconcepts">Subquery (NOT IN)</div>
+  <pre style="font-family:'Liberation Mono',Consolas,monospace; font-size:9pt; background:#f5f6f8; border:1px solid #ccc; border-radius:4px; padding:10px 12px; white-space:pre-wrap; line-height:1.3; margin:6px 0;">SELECT member_id, full_name, membership_type, join_date
+FROM members
+WHERE member_id NOT IN (SELECT DISTINCT member_id FROM loans)
+ORDER BY join_date;</pre>
+</div>
+
+<div class="qbox">
+  <div class="qtitle">Q12. Books that have never once been borrowed</div>
+  <div class="qconcepts">Subquery (NOT EXISTS), JOIN</div>
+  <pre style="font-family:'Liberation Mono',Consolas,monospace; font-size:9pt; background:#f5f6f8; border:1px solid #ccc; border-radius:4px; padding:10px 12px; white-space:pre-wrap; line-height:1.3; margin:6px 0;">SELECT b.title, a.full_name AS author, b.publication_year, b.total_copies
+FROM books b
+JOIN authors a ON a.author_id = b.author_id
+WHERE NOT EXISTS (SELECT 1 FROM loans l WHERE l.book_id = b.book_id)
+ORDER BY b.publication_year;</pre>
+</div>
+
+<div class="qbox">
+  <div class="qtitle">Q13. Currently overdue loans, with the member's contact details</div>
+  <div class="qconcepts">JOIN, WHERE, ORDER BY, date arithmetic</div>
+  <pre style="font-family:'Liberation Mono',Consolas,monospace; font-size:9pt; background:#f5f6f8; border:1px solid #ccc; border-radius:4px; padding:10px 12px; white-space:pre-wrap; line-height:1.3; margin:6px 0;">SELECT m.full_name, m.email, m.phone, b.title,
+       l.due_date, (CURRENT_DATE - l.due_date) AS days_overdue
+FROM loans l
+JOIN members m ON m.member_id = l.member_id
+JOIN books b   ON b.book_id = l.book_id
+WHERE l.status = 'Overdue'
+ORDER BY days_overdue DESC;</pre>
+</div>
+
+<div class="qbox">
+  <div class="qtitle">Q14. Which branches have collected more than K100 in fines?</div>
+  <div class="qconcepts">JOIN, GROUP BY, HAVING, SUM</div>
+  <pre style="font-family:'Liberation Mono',Consolas,monospace; font-size:9pt; background:#f5f6f8; border:1px solid #ccc; border-radius:4px; padding:10px 12px; white-space:pre-wrap; line-height:1.3; margin:6px 0;">SELECT br.branch_name, SUM(f.amount) AS fines_collected
+FROM fines f
+JOIN loans l    ON l.loan_id = f.loan_id
+JOIN staff s    ON s.staff_id = l.staff_id
+JOIN branches br ON br.branch_id = s.branch_id
+WHERE f.status = 'Paid'
+GROUP BY br.branch_name
+HAVING SUM(f.amount) > 100
+ORDER BY fines_collected DESC;</pre>
+</div>
+
+<div class="qbox">
+  <div class="qtitle">Q15. Monthly borrowing trend</div>
+  <div class="qconcepts">GROUP BY (date part), COUNT, ORDER BY</div>
+  <pre style="font-family:'Liberation Mono',Consolas,monospace; font-size:9pt; background:#f5f6f8; border:1px solid #ccc; border-radius:4px; padding:10px 12px; white-space:pre-wrap; line-height:1.3; margin:6px 0;">SELECT EXTRACT(YEAR FROM loan_date) AS loan_year,
+       EXTRACT(MONTH FROM loan_date) AS loan_month,
+       COUNT(*) AS total_loans
+FROM loans
+GROUP BY EXTRACT(YEAR FROM loan_date), EXTRACT(MONTH FROM loan_date)
+ORDER BY loan_year, loan_month;</pre>
+</div>
+
+<div class="qbox">
+  <div class="qtitle">Q16. Average number of days a book stays out, by genre</div>
+  <div class="qconcepts">JOIN, GROUP BY, AVG, WHERE</div>
+  <pre style="font-family:'Liberation Mono',Consolas,monospace; font-size:9pt; background:#f5f6f8; border:1px solid #ccc; border-radius:4px; padding:10px 12px; white-space:pre-wrap; line-height:1.3; margin:6px 0;">SELECT g.genre_name, ROUND(AVG(l.return_date - l.loan_date), 1) AS avg_days_out
+FROM loans l
+JOIN books b  ON b.book_id = l.book_id
+JOIN genres g ON g.genre_id = b.genre_id
+WHERE l.return_date IS NOT NULL
+GROUP BY g.genre_name
+ORDER BY avg_days_out DESC;</pre>
+</div>
+
+<div class="qbox">
+  <div class="qtitle">Q17. Fine payment rate &ndash; how much of what's been issued has actually been collected?</div>
+  <div class="qconcepts">SUM, COUNT, CASE expression</div>
+  <pre style="font-family:'Liberation Mono',Consolas,monospace; font-size:9pt; background:#f5f6f8; border:1px solid #ccc; border-radius:4px; padding:10px 12px; white-space:pre-wrap; line-height:1.3; margin:6px 0;">SELECT
+    COUNT(*) AS total_fines_issued,
+    SUM(CASE WHEN status = 'Paid' THEN 1 ELSE 0 END) AS fines_paid,
+    SUM(amount) AS total_amount_issued,
+    SUM(CASE WHEN status = 'Paid' THEN amount ELSE 0 END) AS total_amount_collected,
+    ROUND(100.0 * SUM(CASE WHEN status = 'Paid' THEN amount ELSE 0 END)
+        / NULLIF(SUM(amount), 0), 1) AS collection_rate_pct
+FROM fines;</pre>
+</div>
+
+<div class="qbox">
+  <div class="qtitle">Q18. Members currently holding 2 or more books at once</div>
+  <div class="qconcepts">Subquery, GROUP BY, HAVING</div>
+  <pre style="font-family:'Liberation Mono',Consolas,monospace; font-size:9pt; background:#f5f6f8; border:1px solid #ccc; border-radius:4px; padding:10px 12px; white-space:pre-wrap; line-height:1.3; margin:6px 0;">SELECT m.full_name, m.email, active.active_loans
+FROM members m
+JOIN (
+    SELECT member_id, COUNT(*) AS active_loans
+    FROM loans
+    WHERE status IN ('Borrowed', 'Overdue')
+    GROUP BY member_id
+    HAVING COUNT(*) >= 2
+) active ON active.member_id = m.member_id
+ORDER BY active.active_loans DESC;</pre>
+</div>
+
+<div class="qbox">
+  <div class="qtitle">Q19. Loans processed per staff member (workload distribution)</div>
+  <div class="qconcepts">JOIN, GROUP BY, COUNT, ORDER BY</div>
+  <pre style="font-family:'Liberation Mono',Consolas,monospace; font-size:9pt; background:#f5f6f8; border:1px solid #ccc; border-radius:4px; padding:10px 12px; white-space:pre-wrap; line-height:1.3; margin:6px 0;">SELECT s.full_name AS staff_member, s.role, br.branch_name, COUNT(l.loan_id) AS loans_processed
+FROM staff s
+JOIN branches br ON br.branch_id = s.branch_id
+LEFT JOIN loans l ON l.staff_id = s.staff_id
+GROUP BY s.full_name, s.role, br.branch_name
+ORDER BY loans_processed DESC;</pre>
+</div>
+
+<div class="qbox">
+  <div class="qtitle">Q20. The single most-borrowed book within each genre</div>
+  <div class="qconcepts">Window function (RANK), CTE &ndash; the "other relevant SQL technique"</div>
+  <pre style="font-family:'Liberation Mono',Consolas,monospace; font-size:9pt; background:#f5f6f8; border:1px solid #ccc; border-radius:4px; padding:10px 12px; white-space:pre-wrap; line-height:1.3; margin:6px 0;">WITH book_loan_counts AS (
+    SELECT b.book_id, b.title, g.genre_name, COUNT(l.loan_id) AS times_borrowed,
+           RANK() OVER (PARTITION BY g.genre_name ORDER BY COUNT(l.loan_id) DESC) AS genre_rank
+    FROM books b
+    JOIN genres g ON g.genre_id = b.genre_id
+    LEFT JOIN loans l ON l.book_id = b.book_id
+    GROUP BY b.book_id, b.title, g.genre_name
+)
+SELECT genre_name, title, times_borrowed
+FROM book_loan_counts
+WHERE genre_rank = 1
+ORDER BY times_borrowed DESC;</pre>
+</div>
+
+<!-- ============ 10 ============ -->
+<h1>10. Query Results and Analysis</h1>
+<p>
+We ran every query above against the live database rather than just
+writing them and assuming they'd work &ndash; all 20 execute cleanly with
+zero errors. Here's what the more interesting ones actually turned up.
+</p>
+<h2>Borrowing is genuinely concentrated on a few titles</h2>
+<p>
+Q9 shows "The Last Road" borrowed 10 times, with "The City Diaries" at 9
+and a cluster of titles at 7&ndash;8. That's not just an artefact of how we
+generated the data &ndash; we deliberately weighted book popularity
+unevenly when generating loans specifically to see whether the queries
+would surface it, and they do. A real library would read this as: a
+minority of titles account for a disproportionate share of circulation,
+which directly informs which titles are worth buying extra copies of
+(Section 15).
+</p>
+<h2>Fine collection is weak &ndash; only 28.9% of issued fines get paid</h2>
+<p>
+Q17 is the one that surprised us most. Out of 98 fines issued totalling
+K1,814.57, only 51 were ever paid, worth K524.25 &ndash; a 28.9% collection
+rate. Over 70% of fine value issued is effectively being written off. That's
+a real operational problem, not just a number.
+</p>
+<h2>Loan volume and fine collection don't move together across branches</h2>
+<p>
+Q3 and Q14 side by side are telling: Northmead Branch processes the most
+loans (140) and also collects the most in fines (K151.50), which tracks.
+But Kitwe Branch processes the second-most loans (127) while collecting
+the least in fines of any branch (K102.75) &ndash; suggesting Kitwe's
+members return books more reliably, or Kitwe is simply less consistent
+about actually enforcing fines. Either way, it's a branch-level difference
+worth someone actually looking into, not assuming is the same everywhere.
+</p>
+<h2>Two members have never borrowed anything at all</h2>
+<p>
+Q11 turned up exactly two registered members (Mutinta Sakala, joined 2020,
+and Mulenga Chisenga, joined 2023) with zero loans on record. Small number,
+but worth noting &ndash; a membership that's never actually been used is
+either a data-entry-only registration or a member who's fallen away
+entirely.
+</p>
+<h2>A handful of members are currently over any reasonable borrowing limit</h2>
+<p>
+Q18 shows 8 members currently holding 2 or more books at once, one of them
+(Michael Chisenga) holding 4 simultaneously. If the library intends to
+enforce a 2-book limit, this immediately identifies who's currently over
+it.
+</p>
+<h2>Genre popularity in the catalogue doesn't match genre popularity in circulation</h2>
+<p>
+Q5/Q6 show Fantasy and Children's tied for the largest share of the
+catalogue (20 titles each), but Q20's per-genre ranking shows the single
+most-borrowed book in the whole system (Mystery &amp; Crime's "The Last
+Road," 10 loans) comes from a genre with only 10 titles &ndash; a much
+smaller shelf punching well above its weight. That's a genuinely useful
+signal for what to buy more of.
+</p>
+
+<!-- ============ 11 ============ -->
+<h1>11. Big Data Architecture</h1>
+<p>
+Section 5 through 10 describe a system that works well at the scale we
+actually populated it at &ndash; a few hundred loans, a few thousand
+records total. The brief asks us to go further: what happens to this
+design once the library's data grows from thousands of records to millions
+or billions? The diagram below is our answer.
+</p>
+<div class="figure">
+  <img src="big_data_architecture.png" alt="Big Data Architecture Diagram" style="width:620px;">
+  <div class="caption">Figure 2. Proposed Big Data architecture, showing how the existing SQL database becomes one input into a larger pipeline rather than being replaced outright.</div>
+</div>
+<p>Purpose of each technology in the diagram:</p>
+<ul>
+  <li><b>Kafka</b> &ndash; captures every loan, return, reservation and fine event in real time, the moment it happens at any branch, rather than waiting for a nightly batch job to notice it.</li>
+  <li><b>Batch extraction</b> &ndash; a scheduled, Sqoop-style pull that copies the full operational database (or just what's changed) out of PostgreSQL on a regular schedule, so the Big Data side always has a current copy without querying the live operational database directly.</li>
+  <li><b>Data Lake (Hadoop/HDFS)</b> &ndash; cheap, distributed storage that keeps every raw event and export exactly as it arrived, forever if needed. This is what actually makes billions of records feasible: HDFS spreads storage and read/write load across many machines instead of one database server.</li>
+  <li><b>Data Warehouse (Hive)</b> &ndash; a curated, cleaned-up copy of the raw data, organised into the kind of fact/dimension tables analysts actually want to query, with Hive giving it a SQL-like query interface over data that's physically stored across the Hadoop cluster.</li>
+  <li><b>Spark (batch)</b> &ndash; does the heavy lifting of cleaning, joining and aggregating raw data from the lake into the warehouse, distributed across many machines so it stays fast even as volume grows.</li>
+  <li><b>Spark Streaming</b> &ndash; processes the Kafka event stream continuously, so figures like "how many books are checked out right now" stay live rather than being a day old.</li>
+  <li><b>Data Lake vs. Data Warehouse, together</b> &ndash; the lake is cheap and holds everything unprocessed; the warehouse is smaller, structured, and fast to query. Keeping both means nothing is ever thrown away, while day-to-day analytics still runs quickly against the curated side.</li>
+</ul>
+
+<!-- ============ 12 ============ -->
+<h1>12. Big Data Scalability</h1>
+
+<h2>What happens when the database grows to millions or billions of records?</h2>
+<p>
+Queries that are instant today &ndash; a JOIN across loans, books and
+members &ndash; get progressively slower as every one of those tables
+grows into the millions, because a single PostgreSQL instance has to scan,
+join and sort all of it on one machine, using one disk and one set of CPU
+cores. Indexes help, but they don't remove the ceiling; eventually the
+working data no longer fits in memory, and every query starts hitting disk.
+Backups, too, go from a five-minute job to something that can take hours
+and hold up operations while it runs.
+</p>
+
+<h2>What limitations might the traditional SQL database face?</h2>
+<ul>
+  <li><b>Vertical scaling limits.</b> A single PostgreSQL server can only be made so big &ndash; more RAM, more CPU, faster disks &ndash; before you run out of hardware that exists to buy.</li>
+  <li><b>Write contention.</b> Four branches all writing loans concurrently to the same tables eventually queues up against row/table locks.</li>
+  <li><b>Analytical queries competing with operational ones.</b> A heavy reporting query (e.g. Q15's full-history monthly trend) run against the live database can slow down the checkout desk trying to process a loan at the same moment.</li>
+  <li><b>Rigid schema.</b> A relational schema assumes the data shape is known upfront; newer, messier data sources (e.g. raw clickstream data from an online catalogue) don't fit a fixed table structure nearly as naturally.</li>
+</ul>
+
+<h2>Why would Big Data technologies be required?</h2>
+<p>
+Because the problem stops being "how do we query this" and becomes "how do
+we even store and move this." Big Data tools like Hadoop and Spark are
+built from the ground up to spread both storage and computation across many
+machines working together, which is the only way to keep pace once a
+single server's disk, memory and CPU are no longer enough &ndash; adding
+another node to a cluster is a lot more realistic than continuing to buy
+bigger and bigger single machines.
+</p>
+
+<h2>How could the organisation store large volumes of data?</h2>
+<p>
+By moving raw historical data into a Hadoop Distributed File System (HDFS)
+data lake, which spreads storage across many machines and tolerates
+individual disk failures without losing data. The operational PostgreSQL
+database would stay in place for day-to-day circulation &ndash; it's good
+at that &ndash; but would no longer be where years of historical data lives
+long-term.
+</p>
+
+<h2>How could the data be processed efficiently?</h2>
+<p>
+By splitting processing into two lanes, both handled by Spark: batch
+processing (Spark on top of Hadoop) for large historical aggregations that
+don't need to be instant, and stream processing (Spark Streaming on top of
+Kafka) for anything that needs to be current right now, like a live count
+of what's checked out. Both scale by adding more machines to the cluster
+rather than making one machine faster.
+</p>
+
+<h2>How could the resulting information support decision-making?</h2>
+<p>
+The same way our own four charts in Section 13 already do at small scale
+&ndash; just running continuously and at the network's full size instead
+of a snapshot. Management gets always-current dashboards (which books to
+reorder, which branches are under-resourced, how fine collection is
+trending) instead of a manual report someone has to remember to run, and
+the underlying data is there to support real forecasting &ndash;
+predicting demand for a title before every copy is out, for instance
+&ndash; rather than just describing what already happened.
+</p>
+
+<!-- ============ 13 ============ -->
+<h1>13. Data Visualisations</h1>
+<p>
+All four charts below are built directly from our own query results using
+Python (pandas + matplotlib), not typed-in numbers.
+</p>
+
+<div class="figure">
+  <img src="chart1_top_borrowed_books.png" alt="Top 10 most borrowed books" style="width:560px;">
+  <div class="caption">Figure 3. Top 10 most borrowed books (from Q9).</div>
+</div>
+<p>
+This makes the popularity skew from Section 10 immediately visible &ndash;
+there's a real, visible drop-off from "The Last Road" at 10 loans down to
+the pack of titles sitting at 7. If the library only had budget to reorder
+a handful of extra copies, this chart alone tells you where to start.
+</p>
+
+<div class="figure">
+  <img src="chart2_catalogue_by_genre.png" alt="Catalogue composition by genre" style="width:450px;">
+  <div class="caption">Figure 4. Share of the catalogue held by each genre (from Q5).</div>
+</div>
+<p>
+Fantasy and Children's together make up over a quarter of the entire
+catalogue, while Self-Help and Education barely register. Read alongside
+Q20 (Section 10), this is useful precisely because it shows the catalogue's
+shape doesn't match circulation's shape &ndash; a small genre can still
+produce the single most-borrowed book in the building.
+</p>
+
+<div class="figure">
+  <img src="chart3_monthly_trend.png" alt="Monthly borrowing trend" style="width:620px;">
+  <div class="caption">Figure 5. Loans per month, January 2024 to September 2026 (from Q15).</div>
+</div>
+<p>
+Borrowing holds a fairly steady rhythm across most of the two and a half
+years, generally sitting between 8 and 19 loans a month, with a visible
+pickup in the last couple of months shown. Worth being honest about here:
+that final spike partly reflects our own data generation approach, which
+deliberately boosted very recent loan activity so the "currently borrowed"
+figures in Q18 and Q13 would have something real to show &ndash; a genuine
+live library would need a few years of real operation before this kind of
+seasonal pattern could be trusted on its own.
+</p>
+
+<div class="figure">
+  <img src="chart4_branch_activity.png" alt="Branch activity: loans vs fines" style="width:520px;">
+  <div class="caption">Figure 6. Loans processed vs. fines collected, by branch (from Q3 and Q14).</div>
+</div>
+<p>
+This is the chart that actually surfaces the Kitwe finding from Section 10
+visually &ndash; the bars (loan volume) and the line (fines collected)
+don't move together. Northmead is high on both. Kitwe is high on loans but
+low on fines. That gap is exactly the kind of thing a chart makes obvious
+in a way a results table doesn't.
+</p>
+
+<!-- ============ 14 ============ -->
+<h1>14. Findings</h1>
+<ol>
+  <li><b>Borrowing is concentrated, not evenly spread.</b> A small number of titles account for a disproportionate share of loans (Q9, Figure 3).</li>
+  <li><b>Fine collection is genuinely weak.</b> Only 28.9% of issued fine value has actually been collected (Q17) &ndash; K1,290 sitting uncollected against K524 actually recovered.</li>
+  <li><b>Branch behaviour differs in ways that don't track loan volume alone.</b> Kitwe processes the second-most loans but collects the least in fines of any branch (Q3, Q14, Figure 6).</li>
+  <li><b>A small number of members are already testing the limits of a fair-use policy.</b> 8 members currently hold 2+ books simultaneously, one holding 4 (Q18).</li>
+  <li><b>The catalogue's shape and circulation's shape don't match.</b> The busiest single title comes from a genre that makes up less than a tenth of the catalogue (Q20 vs. Q5).</li>
+  <li><b>A handful of members and books show zero engagement.</b> Two members have never borrowed anything since joining; a number of older titles have never been borrowed at all (Q11, Q12).</li>
+</ol>
+
+<!-- ============ 15 ============ -->
+<h1>15. Recommendations</h1>
+<ol>
+  <li><b>Actively chase unpaid fines, or reconsider the fine policy entirely.</b> A 28.9% collection rate suggests either the follow-up process isn't working or the fine amounts/policy need rethinking &ndash; either way, K1,290 in issued-but-uncollected fines is worth a deliberate decision, not silence.</li>
+  <li><b>Buy more copies of the small set of consistently high-demand titles</b> identified in Q9/Q20, rather than spreading a limited acquisitions budget evenly across genres.</li>
+  <li><b>Look specifically at why Kitwe's fine collection lags its loan volume</b> &ndash; whether that's genuinely better member behaviour worth learning from, or a process gap worth fixing.</li>
+  <li><b>Decide on, and then actually enforce, a maximum concurrent-loan limit</b> &ndash; Q18 already identifies exactly who is currently over any reasonable threshold.</li>
+  <li><b>Follow up with members who registered but never borrowed anything</b> &ndash; either the registration step needs to lead somewhere, or those records are stale and worth cleaning up.</li>
+  <li><b>Start the move toward the Big Data architecture in Section 11 before it becomes urgent</b> &ndash; specifically, begin exporting operational data into a data lake early, well before query performance on the live database actually becomes a visible problem for staff at the desk.</li>
+</ol>
+
+<!-- ============ 16 ============ -->
+<h1>16. Conclusion</h1>
+<p>
+We set out to build a SQL-based analytics system for a library, and ended
+up with something that actually behaves like one: a proper normalised
+schema, realistic data with real patterns in it, 20 working queries that
+answer real questions rather than textbook ones, a documented path to Big
+Data if the library ever needs it, and visualisations and findings that
+came directly out of our own results rather than being written first and
+matched to numbers after. If nothing else, Section 10's fine-collection
+finding shows the actual point of a project like this &ndash; the query
+didn't just run, it turned up something a real library would want to
+know.
+</p>
+
+</body>
+</html>

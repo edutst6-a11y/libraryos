@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LibraryOS &mdash; Library Management &amp; Usage Analytics</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Sora:wght@600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/css/style.css">
+<link rel="stylesheet" href="/css/auth.css">
+</head>
+<body class="auth-body">
+
+<canvas id="scene"></canvas>
+<div class="auth-vignette"></div>
+
+<div class="auth-wrap">
+  <div class="auth-card">
+    <div class="auth-brand">
+      <div class="brand-mark">L</div>
+      <div>
+        <div class="brand-name">LibraryOS</div>
+        <div class="brand-sub">Library Management &amp; Usage Analytics</div>
+      </div>
+    </div>
+
+    <div class="auth-tabs">
+      <button class="auth-tab active" data-tab="login">Log In</button>
+      <button class="auth-tab" data-tab="register">Create Account</button>
+    </div>
+
+    <!-- LOGIN -->
+    <form id="login-form" class="auth-form">
+      <label class="field-label">Email</label>
+      <input class="field-input" type="email" id="login-email" required placeholder="you@example.com">
+      <label class="field-label">Password</label>
+      <input class="field-input" type="password" id="login-password" required placeholder="&bull;&bull;&bull;&bull;&bull;&bull;&bull;&bull;">
+      <p class="field-error" id="login-error" hidden></p>
+      <button class="auth-submit" type="submit">Log In</button>
+      <p class="auth-hint">Students, patrons, and library staff all log in here &mdash; you'll land on the right dashboard automatically.</p>
+    </form>
+
+    <!-- REGISTER -->
+    <form id="register-form" class="auth-form" hidden>
+      <label class="field-label">Full Name</label>
+      <input class="field-input" type="text" id="reg-name" required placeholder="Jane Mwansa">
+      <label class="field-label">Email</label>
+      <input class="field-input" type="email" id="reg-email" required placeholder="you@example.com">
+      <label class="field-label">Password</label>
+      <input class="field-input" type="password" id="reg-password" required placeholder="At least 8 characters" minlength="8">
+      <div class="field-row">
+        <div>
+          <label class="field-label">Membership Type</label>
+          <select class="field-input" id="reg-type">
+            <option>Student</option><option>Public</option><option>Senior</option>
+          </select>
+        </div>
+        <div>
+          <label class="field-label">Home Branch</label>
+          <select class="field-input" id="reg-branch"></select>
+        </div>
+      </div>
+      <p class="field-error" id="register-error" hidden></p>
+      <button class="auth-submit" type="submit">Create Account</button>
+      <p class="auth-hint">We'll assign your membership number and card the moment you sign up.</p>
+    </form>
+
+    <button class="group-link" id="group-link">&#128274; Project Group</button>
+  </div>
+</div>
+
+<!-- GROUP MODAL -->
+<div class="modal-backdrop" id="group-modal" hidden>
+  <div class="modal-card">
+    <div id="group-locked">
+      <h3>Project Group &mdash; Restricted</h3>
+      <p class="modal-sub">Enter the group leader's password to view the team.</p>
+      <input class="field-input" type="password" id="group-password" placeholder="Password">
+      <p class="field-error" id="group-error" hidden></p>
+      <div class="modal-actions">
+        <button class="btn-ghost" id="group-cancel">Cancel</button>
+        <button class="auth-submit" id="group-submit" style="width:auto; padding:10px 20px;">Unlock</button>
+      </div>
+    </div>
+    <div id="group-unlocked" hidden>
+      <h3>Project Group</h3>
+      <p class="modal-sub">Library Management &amp; Usage Analytics &mdash; Big Data Mid-Semester Project</p>
+      <table class="group-table" id="group-table"></table>
+      <div class="modal-actions"><button class="btn-ghost" id="group-close">Close</button></div>
+    </div>
+  </div>
+</div>
+
+<script src="/js/config.js"></script>
+<script type="module" src="/js/scene.js"></script>
+<script src="/js/auth.js"></script>
+</body>
+</html>

@@ -1,0 +1,11 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "libraryos",
+      "runtimeExecutable": "/home/tadiwanashe-nenzou/Desktop/Big_data/venv/bin/python3",
+      "runtimeArgs": ["/home/tadiwanashe-nenzou/Desktop/Big_data/webapp/app.py"],
+      "port": 5055
+    }
+  ]
+}
