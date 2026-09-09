@@ -234,6 +234,16 @@ def api_branches_public():
 
 
 # ============================================================ GROUP (password-gated academic project info)
+@app.route("/api/group/members")
+def group_members_public():
+    conn = get_conn()
+    cur = conn.cursor()
+    cur.execute("SELECT full_name, role FROM group_members ORDER BY sort_order")
+    cols, members = rows_to_json(cur)
+    conn.close()
+    return jsonify(members)
+
+
 @app.route("/api/group/unlock", methods=["POST"])
 def group_unlock():
     data = request.get_json(force=True)

@@ -102,9 +102,12 @@ export function initTesseract(canvasId, opts = {}) {
   resize();
   window.addEventListener("resize", resize);
 
+  let rafId = null;
+  let stopped = false;
   const clock = new THREE.Clock();
   function animate() {
-    requestAnimationFrame(animate);
+    if (stopped) return;
+    rafId = requestAnimationFrame(animate);
     const t = clock.getElapsedTime();
 
     const projected = verts4D.map(v => project4Dto3D(rotate4D(v, t * 0.35, t * 0.22, t * 0.13)));
@@ -125,5 +128,14 @@ export function initTesseract(canvasId, opts = {}) {
   }
   animate();
 
-  return { renderer, scene, camera };
+  function stop() {
+    stopped = true;
+    if (rafId) cancelAnimationFrame(rafId);
+    window.removeEventListener("resize", resize);
+    renderer.dispose();
+    lineGeo.dispose();
+    sphereGeo.dispose();
+  }
+
+  return { renderer, scene, camera, stop };
 }

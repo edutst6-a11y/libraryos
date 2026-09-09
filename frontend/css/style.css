@@ -267,3 +267,88 @@ pre.sql-block .kw { color: #7fb8e8; font-weight: 600; }
   .grid-2, .grid-2-even { grid-template-columns: 1fr; }
   .sql-layout { grid-template-columns: 1fr; }
 }
+
+/* ============================================================
+   BIG DATA PROJECT SHOWCASE THEME
+   Consistent dark navy/gold shell used by every page under the
+   "Big Data Project" nav section, with a university-logo watermark,
+   an assignment-requirement badge, a live group byline, and a
+   shared credit footer.
+   ============================================================ */
+.bdp-shell {
+  position: relative; border-radius: 16px; overflow: hidden;
+  background: linear-gradient(165deg, #14314f 0%, #0f2942 55%, #0a1c30 100%);
+  border: 1px solid rgba(232,200,138,0.18);
+  box-shadow: 0 30px 70px -20px rgba(5,15,28,0.55);
+  padding: 28px 30px 24px 30px; color: #e7edf6;
+}
+.bdp-shell::before {
+  content: ''; position: absolute; inset: 0; pointer-events: none; z-index: 0;
+  background: url('/img/unilus_logo.png') center 55% / 260px no-repeat;
+  opacity: 0.06; filter: grayscale(1) brightness(2);
+}
+.bdp-shell > * { position: relative; z-index: 1; }
+
+.bdp-badge {
+  display: inline-flex; flex-direction: column; gap: 3px;
+  background: rgba(232,200,138,0.1); border: 1px solid rgba(232,200,138,0.35);
+  border-radius: 10px; padding: 10px 16px; margin-bottom: 16px;
+}
+.bdp-badge .bdp-badge-label { font-size: 10px; text-transform: uppercase; letter-spacing: 0.6px; color: #e8c88a; font-weight: 700; }
+.bdp-badge .bdp-badge-text { font-size: 12.5px; color: #d5e0ee; line-height: 1.5; }
+
+.bdp-title { font-family: 'Inter', sans-serif; font-size: 21px; font-weight: 800; color: #fff; margin: 0 0 6px 0; }
+.bdp-sub { font-size: 13px; color: #a9bcd4; margin: 0 0 18px 0; line-height: 1.6; }
+
+.bdp-panel {
+  background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.09);
+  border-radius: 12px; padding: 18px 20px; margin-bottom: 16px;
+  transform-style: preserve-3d; transition: transform 0.25s cubic-bezier(0.16,1,0.3,1), box-shadow 0.25s, background 0.2s;
+}
+.bdp-panel:hover { background: rgba(255,255,255,0.06); box-shadow: 0 20px 44px -18px rgba(0,0,0,0.5); }
+.bdp-panel h3 { margin: 0 0 8px 0; font-size: 14.5px; color: #e8c88a; }
+.bdp-panel p, .bdp-panel li { font-size: 13px; line-height: 1.65; color: #d5e0ee; }
+.bdp-panel .mono { font-family: 'JetBrains Mono', monospace; color: #f4e7c9; }
+
+.bdp-byline {
+  display: flex; align-items: center; gap: 8px; flex-wrap: wrap;
+  font-size: 11.5px; color: #93a8c2; margin-bottom: 18px; padding-bottom: 14px;
+  border-bottom: 1px solid rgba(255,255,255,0.1);
+}
+.bdp-byline .bdp-chip {
+  background: rgba(232,200,138,0.12); border: 1px solid rgba(232,200,138,0.3);
+  border-radius: 20px; padding: 3px 10px; color: #e8c88a; font-weight: 600;
+}
+
+.bdp-footer {
+  margin-top: 22px; padding-top: 14px; border-top: 1px solid rgba(255,255,255,0.1);
+  font-size: 11px; color: #6d84a3; text-align: center;
+}
+
+.bdp-checklist { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 10px; }
+.bdp-checklist li {
+  display: flex; align-items: flex-start; gap: 10px; font-size: 13px; color: #d5e0ee;
+  background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 9px; padding: 10px 14px; cursor: pointer; transition: background 0.15s;
+}
+.bdp-checklist li:hover { background: rgba(255,255,255,0.06); }
+.bdp-checklist .bdp-check { color: #4ade80; font-weight: 800; flex-shrink: 0; }
+.bdp-checklist .bdp-item-title { font-weight: 700; color: #fff; }
+.bdp-checklist .bdp-item-sub { color: #93a8c2; font-size: 11.5px; margin-top: 2px; }
+
+.bdp-slide {
+  background: linear-gradient(165deg, #14314f 0%, #0f2942 60%, #0a1c30 100%);
+  border-radius: 16px; border: 1px solid rgba(232,200,138,0.18);
+  box-shadow: 0 24px 50px -18px rgba(5,15,28,0.5);
+  padding: 40px 44px; margin-bottom: 20px; min-height: 260px;
+  display: flex; flex-direction: column; justify-content: center; position: relative; overflow: hidden;
+}
+.bdp-slide::before {
+  content: ''; position: absolute; inset: 0; pointer-events: none;
+  background: url('/img/unilus_logo.png') 96% 8% / 70px no-repeat; opacity: 0.14;
+}
+.bdp-slide .bdp-slide-num { position: absolute; top: 16px; left: 20px; font-size: 11px; color: #6d84a3; font-weight: 700; }
+.bdp-slide h2 { color: #fff; font-size: 24px; margin: 0 0 14px 0; }
+.bdp-slide p, .bdp-slide li { color: #d5e0ee; font-size: 14px; line-height: 1.7; }
+.bdp-slide ul { margin: 0; padding-left: 20px; }
+.bdp-accent-canvas { display: block; width: 100%; height: 100%; border-radius: 10px; }

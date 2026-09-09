@@ -1,6 +1,6 @@
 // Lightweight 3D tilt-on-hover for cards -- call attachTilt() after any DOM
 // swap that adds new .stat-card / .panel elements.
-function attachTilt(selector = ".stat-card, .panel, .diagram-frame, .membership-card") {
+function attachTilt(selector = ".stat-card, .panel, .diagram-frame, .membership-card, .bdp-panel, .bdp-slide") {
   document.querySelectorAll(selector).forEach(el => {
     if (el.dataset.tiltBound) return;
     el.dataset.tiltBound = "1";
