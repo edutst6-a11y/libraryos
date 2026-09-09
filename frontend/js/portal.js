@@ -1,5 +1,7 @@
 requireAuth();
 
+document.querySelector(".portal-main").classList.add("view-enter");
+
 const account = getAccount();
 if (account && account.accountType === "staff") window.location.href = "/dashboard.html";
 
@@ -43,6 +45,7 @@ function badge(status) { return status ? `<span class="badge ${STATUS_CLASS[stat
   document.getElementById("tbody-loans").innerHTML = rows.length
     ? rows.map(r => `<tr><td>${esc(r.book)}</td><td>${fmtDate(r.loan_date)}</td><td>${fmtDate(r.due_date)}</td><td>${badge(r.status)}</td></tr>`).join("")
     : `<tr class="loading-row"><td colspan="4">You haven't borrowed anything yet.</td></tr>`;
+  attachTilt();
 })();
 
 (async function loadFines() {
@@ -50,6 +53,7 @@ function badge(status) { return status ? `<span class="badge ${STATUS_CLASS[stat
   document.getElementById("tbody-fines").innerHTML = rows.length
     ? rows.map(r => `<tr><td>${esc(r.book)}</td><td>${fmtMoney(r.amount)}</td><td>${esc(r.reason)}</td><td>${badge(r.status)}</td></tr>`).join("")
     : `<tr class="loading-row"><td colspan="4">No fines on your account.</td></tr>`;
+  attachTilt();
 })();
 
 // ============================================================ catalogue browse
@@ -69,6 +73,7 @@ async function loadBooks() {
     <button class="btn" id="next-books" ${page >= totalPages ? "disabled" : ""}>Next &rarr;</button>`;
   document.getElementById("prev-books")?.addEventListener("click", () => { page--; loadBooks(); });
   document.getElementById("next-books")?.addEventListener("click", () => { page++; loadBooks(); });
+  attachTilt();
 }
 function debounce(fn, ms) { let t; return (...a) => { clearTimeout(t); t = setTimeout(() => fn(...a), ms); }; }
 

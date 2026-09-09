@@ -37,9 +37,12 @@
       <a href="#reservations" class="nav-link" data-view="reservations"><span class="nav-icon">&#128278;</span>Reservations</a>
 
       <div class="nav-section">Big Data Project</div>
+      <a href="#schema" class="nav-link" data-view="schema"><span class="nav-icon">&#128451;</span>Database Schema</a>
       <a href="#sql" class="nav-link" data-view="sql"><span class="nav-icon">&#10064;</span>SQL Explorer</a>
       <a href="#erd" class="nav-link" data-view="erd"><span class="nav-icon">&#8862;</span>ER Diagram</a>
       <a href="#architecture" class="nav-link" data-view="architecture"><span class="nav-icon">&#9729;</span>Big Data Architecture</a>
+      <a href="#analytics" class="nav-link" data-view="analytics"><span class="nav-icon">&#128200;</span>Visualisations</a>
+      <a href="#report" class="nav-link" data-view="report"><span class="nav-icon">&#128196;</span>Project Report</a>
       <a href="#" class="nav-link" id="group-nav-link"><span class="nav-icon">&#128274;</span>Project Group</a>
     </nav>
 
@@ -89,7 +92,18 @@
       <h3>Project Group</h3>
       <p class="modal-sub">Library Management &amp; Usage Analytics &mdash; Big Data Mid-Semester Project</p>
       <table class="group-table" id="group-table"></table>
-      <div class="modal-actions"><button class="btn-ghost" id="group-close">Close</button></div>
+
+      <p class="modal-sub" style="margin-top:18px;">Add a group member</p>
+      <div class="field-row">
+        <input class="field-input" type="text" id="group-add-name" placeholder="Full name">
+        <input class="field-input" type="text" id="group-add-sid" placeholder="Student ID">
+      </div>
+      <input class="field-input" type="text" id="group-add-role" placeholder="Role (e.g. Member)" style="margin-top:10px;">
+      <p class="field-error" id="group-add-error" hidden></p>
+      <div class="modal-actions">
+        <button class="btn-ghost" id="group-close">Close</button>
+        <button class="auth-submit" id="group-add-submit" style="width:auto; padding:10px 20px;">Add Member</button>
+      </div>
     </div>
   </div>
 </div>

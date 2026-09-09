@@ -89,6 +89,14 @@ document.getElementById("group-cancel").addEventListener("click", () => groupMod
 document.getElementById("group-close").addEventListener("click", () => groupModal.hidden = true);
 groupModal.addEventListener("click", (e) => { if (e.target === groupModal) groupModal.hidden = true; });
 
+let groupAdminToken = null;
+
+function renderGroupTable(members) {
+  document.getElementById("group-table").innerHTML = members.map(m => `
+    <tr><td><strong>${m.full_name}</strong></td><td>${m.student_id}</td><td class="role">${m.role || ""}</td></tr>
+  `).join("");
+}
+
 document.getElementById("group-submit").addEventListener("click", async () => {
   const errEl = document.getElementById("group-error");
   errEl.hidden = true;
@@ -99,9 +107,8 @@ document.getElementById("group-submit").addEventListener("click", async () => {
     });
     const data = await res.json();
     if (!res.ok) throw new Error(data.error || "Incorrect password.");
-    document.getElementById("group-table").innerHTML = data.members.map(m => `
-      <tr><td><strong>${m.full_name}</strong></td><td>${m.student_id}</td><td class="role">${m.role || ""}</td></tr>
-    `).join("");
+    groupAdminToken = data.token;
+    renderGroupTable(data.members);
     document.getElementById("group-locked").hidden = true;
     document.getElementById("group-unlocked").hidden = false;
   } catch (err) {
@@ -111,4 +118,26 @@ document.getElementById("group-submit").addEventListener("click", async () => {
 });
 document.getElementById("group-password").addEventListener("keydown", (e) => {
   if (e.key === "Enter") document.getElementById("group-submit").click();
+});
+
+document.getElementById("group-add-submit").addEventListener("click", async () => {
+  const errEl = document.getElementById("group-add-error");
+  errEl.hidden = true;
+  const nameEl = document.getElementById("group-add-name");
+  const sidEl = document.getElementById("group-add-sid");
+  const roleEl = document.getElementById("group-add-role");
+  try {
+    const res = await fetch(API_BASE + "/api/group/members", {
+      method: "POST",
+      headers: { "Content-Type": "application/json", "Authorization": "Bearer " + groupAdminToken },
+      body: JSON.stringify({ fullName: nameEl.value, studentId: sidEl.value, role: roleEl.value }),
+    });
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.error || "Could not add member.");
+    renderGroupTable(data.members);
+    nameEl.value = ""; sidEl.value = ""; roleEl.value = "";
+  } catch (err) {
+    errEl.textContent = err.message;
+    errEl.hidden = false;
+  }
 });

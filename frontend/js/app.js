@@ -6,8 +6,9 @@ const navLinks = document.querySelectorAll('.nav-link[data-view]');
 
 const TITLES = {
   dashboard: 'Dashboard', analytics: 'Analytics', books: 'Books', members: 'Members',
-  loans: 'Loans', fines: 'Fines', reservations: 'Reservations', sql: 'SQL Explorer',
-  erd: 'Entity Relationship Diagram', architecture: 'Big Data Architecture',
+  loans: 'Loans', fines: 'Fines', reservations: 'Reservations', schema: 'Database Schema',
+  sql: 'SQL Explorer', erd: 'Entity Relationship Diagram', architecture: 'Big Data Architecture',
+  report: 'Project Report',
 };
 
 const STATUS_CLASS = {
@@ -52,13 +53,17 @@ function esc(s) { const d = document.createElement('div'); d.textContent = s == 
 })();
 
 // ============================================================ ROUTER
-function navigate() {
+async function navigate() {
   const view = (location.hash || '#dashboard').slice(1);
   viewTitle.textContent = TITLES[view] || 'Dashboard';
   navLinks.forEach(a => a.classList.toggle('active', a.dataset.view === view));
   Object.keys(charts).forEach(destroyChart);
+  content.classList.remove('view-enter');
   const renderer = RENDERERS[view] || RENDERERS.dashboard;
-  renderer();
+  await renderer();
+  attachTilt();
+  void content.offsetWidth; // restart the entrance animation on every navigation
+  content.classList.add('view-enter');
 }
 window.addEventListener('hashchange', navigate);
 window.addEventListener('DOMContentLoaded', navigate);
@@ -88,6 +93,12 @@ document.getElementById('group-nav-link').addEventListener('click', (e) => {
 document.getElementById('group-cancel').addEventListener('click', () => groupModal.hidden = true);
 document.getElementById('group-close').addEventListener('click', () => groupModal.hidden = true);
 groupModal.addEventListener('click', (e) => { if (e.target === groupModal) groupModal.hidden = true; });
+let groupAdminToken = null;
+function renderGroupTable(members) {
+  document.getElementById('group-table').innerHTML = members.map(m => `
+    <tr><td><strong>${esc(m.full_name)}</strong></td><td>${esc(m.student_id)}</td><td class="role">${esc(m.role || '')}</td></tr>
+  `).join('');
+}
 document.getElementById('group-submit').addEventListener('click', async () => {
   const errEl = document.getElementById('group-error');
   errEl.hidden = true;
@@ -98,9 +109,8 @@ document.getElementById('group-submit').addEventListener('click', async () => {
     });
     const data = await res.json();
     if (!res.ok) throw new Error(data.error || 'Incorrect password.');
-    document.getElementById('group-table').innerHTML = data.members.map(m => `
-      <tr><td><strong>${esc(m.full_name)}</strong></td><td>${esc(m.student_id)}</td><td class="role">${esc(m.role || '')}</td></tr>
-    `).join('');
+    groupAdminToken = data.token;
+    renderGroupTable(data.members);
     document.getElementById('group-locked').hidden = true;
     document.getElementById('group-unlocked').hidden = false;
   } catch (err) {
@@ -110,6 +120,27 @@ document.getElementById('group-submit').addEventListener('click', async () => {
 });
 document.getElementById('group-password').addEventListener('keydown', (e) => {
   if (e.key === 'Enter') document.getElementById('group-submit').click();
+});
+document.getElementById('group-add-submit').addEventListener('click', async () => {
+  const errEl = document.getElementById('group-add-error');
+  errEl.hidden = true;
+  const nameEl = document.getElementById('group-add-name');
+  const sidEl = document.getElementById('group-add-sid');
+  const roleEl = document.getElementById('group-add-role');
+  try {
+    const res = await fetch(API_BASE + '/api/group/members', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + groupAdminToken },
+      body: JSON.stringify({ fullName: nameEl.value, studentId: sidEl.value, role: roleEl.value }),
+    });
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.error || 'Could not add member.');
+    renderGroupTable(data.members);
+    nameEl.value = ''; sidEl.value = ''; roleEl.value = '';
+  } catch (err) {
+    errEl.textContent = err.message;
+    errEl.hidden = false;
+  }
 });
 
 // ============================================================ DASHBOARD
@@ -381,7 +412,12 @@ async function renderReservations() {
 
 // ============================================================ SQL EXPLORER
 async function renderSql() {
-  content.innerHTML = `<div class="sql-layout">
+  content.innerHTML = `
+    <div class="doc-header">
+      <div class="doc-sub">All 20 assignment queries, run live against PostgreSQL.</div>
+      <a class="download-btn" href="/downloads/03_queries.sql" download>&#11015; Download queries.sql</a>
+    </div>
+    <div class="sql-layout">
     <div class="panel" style="padding:14px;"><div class="query-list" id="query-list"></div></div>
     <div id="sql-result"><div class="panel"><div class="empty-note">Pick a query on the left to run it live.</div></div></div>
   </div>`;
@@ -421,14 +457,49 @@ async function runQuery(id) {
 
 // ============================================================ ERD / ARCHITECTURE
 function renderErd() {
-  content.innerHTML = `<div class="diagram-frame">
-    <img src="/img/library_erd_full.png" alt="Entity Relationship Diagram">
-  </div>`;
+  content.innerHTML = `
+    <div class="doc-header">
+      <div class="doc-sub">10-table schema — branches, staff, authors, publishers, genres, books, members, loans, fines, reservations.</div>
+      <a class="download-btn" href="/img/library_erd_full.png" download="library_erd.png">&#11015; Download PNG</a>
+    </div>
+    <div class="diagram-frame">
+      <img src="/img/library_erd_full.png" alt="Entity Relationship Diagram">
+    </div>`;
 }
 function renderArchitecture() {
-  content.innerHTML = `<div class="diagram-frame">
-    <img src="/img/big_data_architecture_full.png" alt="Big Data Architecture Diagram">
-  </div>`;
+  content.innerHTML = `
+    <div class="doc-header">
+      <div class="doc-sub">End-to-end Big Data architecture for the Library Management and Usage Analytics system.</div>
+      <a class="download-btn" href="/img/big_data_architecture_full.png" download="big_data_architecture.png">&#11015; Download PNG</a>
+    </div>
+    <div class="diagram-frame">
+      <img src="/img/big_data_architecture_full.png" alt="Big Data Architecture Diagram">
+    </div>`;
+}
+
+// ============================================================ DATABASE SCHEMA
+async function renderSchema() {
+  content.innerHTML = `
+    <div class="doc-header">
+      <div class="doc-sub">The full CREATE SCHEMA / CREATE TABLE / index SQL, live and reviewable.</div>
+      <a class="download-btn" href="/downloads/01_schema.sql" download>&#11015; Download schema.sql</a>
+    </div>
+    <div class="panel"><pre class="sql-block" id="schema-block">Loading…</pre></div>`;
+  const res = await fetch('/downloads/01_schema.sql');
+  const text = await res.text();
+  document.getElementById('schema-block').textContent = text;
+}
+
+// ============================================================ PROJECT REPORT
+function renderReport() {
+  content.innerHTML = `
+    <div class="doc-header">
+      <div class="doc-sub">The full written project report — problem statement, methodology, architecture, findings, and reflections.</div>
+      <a class="download-btn" href="/downloads/Library_Analytics_Project_Report.pdf" download>&#11015; Download PDF</a>
+    </div>
+    <div class="panel" style="padding:12px;">
+      <iframe class="pdf-frame" src="/downloads/Library_Analytics_Project_Report.pdf" title="Project Report"></iframe>
+    </div>`;
 }
 
 // ============================================================ util
@@ -436,6 +507,6 @@ function debounce(fn, ms) { let t; return (...a) => { clearTimeout(t); t = setTi
 
 const RENDERERS = {
   dashboard: renderDashboard, analytics: renderAnalytics, books: renderBooks, members: renderMembers,
-  loans: renderLoans, fines: renderFines, reservations: renderReservations, sql: renderSql,
-  erd: renderErd, architecture: renderArchitecture,
+  loans: renderLoans, fines: renderFines, reservations: renderReservations, schema: renderSchema,
+  sql: renderSql, erd: renderErd, architecture: renderArchitecture, report: renderReport,
 };

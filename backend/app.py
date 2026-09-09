@@ -253,6 +253,43 @@ def group_unlock():
     return jsonify({"token": token, "members": members})
 
 
+def group_admin_required(f):
+    @wraps(f)
+    @auth_required
+    def wrapper(*args, **kwargs):
+        if request.user.get("account_type") != "group_admin":
+            return jsonify({"error": "Group leader access required"}), 403
+        return f(*args, **kwargs)
+    return wrapper
+
+
+@app.route("/api/group/members", methods=["POST"])
+@group_admin_required
+def add_group_member():
+    data = request.get_json(force=True)
+    full_name = (data.get("fullName") or "").strip()
+    student_id = (data.get("studentId") or "").strip()
+    role = (data.get("role") or "Member").strip() or "Member"
+
+    if not full_name or not student_id:
+        return jsonify({"error": "Full name and student ID are required."}), 400
+
+    conn = get_conn()
+    cur = conn.cursor()
+    cur.execute("SELECT COALESCE(MAX(sort_order), 0) + 1 FROM group_members")
+    next_sort = cur.fetchone()[0]
+    cur.execute(
+        "INSERT INTO group_members (full_name, student_id, role, sort_order) VALUES (%s, %s, %s, %s)",
+        (full_name, student_id, role, next_sort),
+    )
+    conn.commit()
+
+    cur.execute("SELECT full_name, student_id, role FROM group_members ORDER BY sort_order")
+    cols, members = rows_to_json(cur)
+    conn.close()
+    return jsonify({"members": members}), 201
+
+
 # ============================================================ dashboard stats (management only)
 @app.route("/api/stats")
 @management_required

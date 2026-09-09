@@ -104,7 +104,12 @@ body {
 }
 @keyframes pulse { 0%,100% { opacity: 1; } 50% { opacity: 0.4; } }
 
-.content { padding: 28px 32px 60px 32px; max-width: 1400px; }
+.content { padding: 28px 32px 60px 32px; max-width: 1400px; perspective: 1400px; }
+.content.view-enter { animation: viewEnter 0.5s cubic-bezier(0.16,1,0.3,1); }
+@keyframes viewEnter {
+  from { opacity: 0; transform: rotateX(6deg) translateY(18px) scale(0.98); }
+  to   { opacity: 1; transform: rotateX(0) translateY(0) scale(1); }
+}
 
 /* ============ STAT CARDS ============ */
 .stat-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 16px; margin-bottom: 28px; }
@@ -215,8 +220,24 @@ pre.sql-block .kw { color: #7fb8e8; font-weight: 600; }
 .diagram-frame {
   background: #fff; border-radius: var(--radius); border: 1px solid var(--border);
   box-shadow: var(--shadow); padding: 24px; text-align: center;
+  transform-style: preserve-3d; transition: transform 0.25s cubic-bezier(0.16,1,0.3,1), box-shadow 0.25s;
+  will-change: transform;
 }
+.diagram-frame:hover { box-shadow: 0 22px 44px -16px rgba(15,41,66,0.26); }
 .diagram-frame img { max-width: 100%; border-radius: 6px; }
+
+/* ============ DOCUMENT HEADER / DOWNLOAD ============ */
+.doc-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; gap: 12px; flex-wrap: wrap; }
+.doc-header .doc-sub { color: var(--text-dim); font-size: 13px; }
+.download-btn {
+  display: inline-flex; align-items: center; gap: 7px; white-space: nowrap;
+  background: linear-gradient(135deg, #e8c88a, #c9973d); color: #0f2942;
+  border: none; border-radius: 8px; padding: 9px 16px; font-size: 12.5px; font-weight: 700;
+  cursor: pointer; text-decoration: none; box-shadow: 0 6px 16px rgba(201,151,61,0.28);
+  transition: transform 0.15s, box-shadow 0.15s;
+}
+.download-btn:hover { transform: translateY(-1px); box-shadow: 0 8px 20px rgba(201,151,61,0.38); }
+.pdf-frame { width: 100%; height: 640px; border: 1px solid var(--border); border-radius: var(--radius); }
 
 /* ============ MISC ============ */
 .section-hidden { display: none; }

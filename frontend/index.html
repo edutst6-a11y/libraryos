@@ -86,7 +86,18 @@
       <h3>Project Group</h3>
       <p class="modal-sub">Library Management &amp; Usage Analytics &mdash; Big Data Mid-Semester Project</p>
       <table class="group-table" id="group-table"></table>
-      <div class="modal-actions"><button class="btn-ghost" id="group-close">Close</button></div>
+
+      <p class="modal-sub" style="margin-top:18px;">Add a group member</p>
+      <div class="field-row">
+        <input class="field-input" type="text" id="group-add-name" placeholder="Full name">
+        <input class="field-input" type="text" id="group-add-sid" placeholder="Student ID">
+      </div>
+      <input class="field-input" type="text" id="group-add-role" placeholder="Role (e.g. Member)" style="margin-top:10px;">
+      <p class="field-error" id="group-add-error" hidden></p>
+      <div class="modal-actions">
+        <button class="btn-ghost" id="group-close">Close</button>
+        <button class="auth-submit" id="group-add-submit" style="width:auto; padding:10px 20px;">Add Member</button>
+      </div>
     </div>
   </div>
 </div>
