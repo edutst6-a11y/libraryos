@@ -8,7 +8,7 @@ const TITLES = {
   dashboard: 'Dashboard', analytics: 'Analytics', books: 'Books', members: 'Members',
   loans: 'Loans', fines: 'Fines', reservations: 'Reservations', schema: 'Database Schema',
   sql: 'SQL Explorer', erd: 'Entity Relationship Diagram', architecture: 'Big Data Architecture',
-  report: 'Project Report',
+  tesseract: '4D Visualization', report: 'Project Report',
 };
 
 const STATUS_CLASS = {
@@ -502,11 +502,36 @@ function renderReport() {
     </div>`;
 }
 
+// ============================================================ 4D VISUALIZATION
+async function renderTesseract() {
+  content.innerHTML = `
+    <div class="doc-header">
+      <div class="doc-sub">A tesseract &mdash; a genuine 4-dimensional hypercube, rotated in two independent 4D planes and mathematically projected down through 3D to your screen every frame.</div>
+    </div>
+    <div class="tesseract-frame">
+      <canvas id="tesseract-canvas"></canvas>
+    </div>
+    <div class="panel" style="margin-top:16px;">
+      <div class="panel-title">How this is 4D, not just 3D</div>
+      <div class="panel-sub" style="margin-top:8px; line-height:1.7;">
+        The shape has 16 vertices &mdash; every combination of &plusmn;1 across four coordinates (x, y, z, w) &mdash;
+        and 32 edges connecting vertices that differ in exactly one coordinate. Each frame, the vertices are rotated
+        in the XW, YZ, and XY planes using real 4D rotation matrices, then projected from 4D into 3D with a
+        perspective divide on the w-axis (the same trick a normal 3D camera uses to turn 3D into 2D, one dimension
+        up). Three.js then renders that 3D result to your 2D screen as usual. The pulsing, morphing motion you see
+        is the actual signature of a 4D object being viewed through two dimension-reductions at once.
+      </div>
+    </div>`;
+  const { initTesseract } = await import('/js/tesseract.js');
+  initTesseract('tesseract-canvas', { fill: true });
+}
+
 // ============================================================ util
 function debounce(fn, ms) { let t; return (...a) => { clearTimeout(t); t = setTimeout(() => fn(...a), ms); }; }
 
 const RENDERERS = {
   dashboard: renderDashboard, analytics: renderAnalytics, books: renderBooks, members: renderMembers,
   loans: renderLoans, fines: renderFines, reservations: renderReservations, schema: renderSchema,
-  sql: renderSql, erd: renderErd, architecture: renderArchitecture, report: renderReport,
+  sql: renderSql, erd: renderErd, architecture: renderArchitecture, tesseract: renderTesseract,
+  report: renderReport,
 };
