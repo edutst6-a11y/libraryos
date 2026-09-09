@@ -28,11 +28,27 @@ function fmtDate(d) { return d ? new Date(d).toLocaleDateString(undefined, { yea
 function fmtMoney(n) { return 'K' + Number(n).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 }); }
 function esc(s) { const d = document.createElement('div'); d.textContent = s == null ? '' : s; return d.innerHTML; }
 
-// ============================================================ user info / logout
+// ============================================================ user info / logout / role switch
 (function initUser() {
   const account = getAccount();
   document.getElementById('user-name').textContent = account ? `${account.fullName} (${account.role || 'Staff'})` : '—';
   document.getElementById('logout-btn').addEventListener('click', logout);
+
+  const roleSelect = document.getElementById('role-switcher');
+  if (account && account.role) roleSelect.value = account.role;
+  roleSelect.addEventListener('change', async () => {
+    const role = roleSelect.value;
+    try {
+      await api('/api/auth/role', { method: 'PATCH', body: JSON.stringify({ role }) });
+      const updated = getAccount();
+      updated.role = role;
+      setAccount(updated);
+      document.getElementById('user-name').textContent = `${updated.fullName} (${role})`;
+    } catch (err) {
+      roleSelect.value = account.role || 'Librarian';
+      alert('Could not switch role: ' + err.message);
+    }
+  });
 })();
 
 // ============================================================ ROUTER

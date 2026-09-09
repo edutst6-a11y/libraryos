@@ -162,7 +162,7 @@ def login():
         token = issue_token({"account_type": "member", "member_id": member_id, "email": email})
         return jsonify({"token": token, "accountType": "member", "fullName": full_name, "memberId": member_id})
 
-    cur.execute("SELECT staff_id, full_name, role, password_hash, is_active FROM staff WHERE email = %s", (email,))
+    cur.execute("SELECT staff_id, full_name, role, password_hash, is_active FROM staff WHERE email = %s OR username = %s", (email, email))
     row = cur.fetchone()
     if row and row[3] and bcrypt.checkpw(password.encode(), row[3].encode()):
         if not row[4]:
@@ -203,6 +203,24 @@ def me():
         cols, rows = rows_to_json(cur)
         conn.close()
         return jsonify({"accountType": "staff", **rows[0]})
+
+
+STAFF_ROLES = ("Librarian", "Assistant Librarian", "Branch Manager", "IT Support")
+
+
+@app.route("/api/auth/role", methods=["PATCH"])
+@management_required
+def switch_role():
+    data = request.get_json(force=True)
+    role = data.get("role")
+    if role not in STAFF_ROLES:
+        return jsonify({"error": f"Role must be one of: {', '.join(STAFF_ROLES)}"}), 400
+    conn = get_conn()
+    cur = conn.cursor()
+    cur.execute("UPDATE staff SET role = %s WHERE staff_id = %s", (role, request.user["staff_id"]))
+    conn.commit()
+    conn.close()
+    return jsonify({"role": role})
 
 
 @app.route("/api/branches")
