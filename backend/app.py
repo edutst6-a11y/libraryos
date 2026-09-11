@@ -5,6 +5,7 @@ Vercel) talks to this over HTTP. Database connection is entirely
 environment-driven so the same code runs locally and in production.
 """
 import os
+import base64
 import jwt
 import bcrypt
 import psycopg2
@@ -12,7 +13,7 @@ import psycopg2.extras
 from datetime import date, datetime, timedelta
 from decimal import Decimal
 from functools import wraps
-from flask import Flask, jsonify, request
+from flask import Flask, jsonify, request, Response
 from flask_cors import CORS
 
 app = Flask(__name__)
@@ -231,6 +232,69 @@ def api_branches_public():
     cols, rows = rows_to_json(cur)
     conn.close()
     return jsonify(rows)
+
+
+# ============================================================ PROJECT REPORT (edit as Word, save back to PDF)
+@app.route("/api/report/content")
+def report_content():
+    conn = get_conn()
+    cur = conn.cursor()
+    cur.execute("SELECT html_content, updated_at, updated_by FROM report_document ORDER BY id DESC LIMIT 1")
+    row = cur.fetchone()
+    conn.close()
+    if not row:
+        return jsonify({"error": "No report on file."}), 404
+    return jsonify({
+        "html": row[0],
+        "updatedAt": row[1].isoformat() if row[1] else None,
+        "updatedBy": row[2],
+    })
+
+
+@app.route("/api/report/pdf")
+def report_pdf():
+    conn = get_conn()
+    cur = conn.cursor()
+    cur.execute("SELECT pdf_bytes FROM report_document ORDER BY id DESC LIMIT 1")
+    row = cur.fetchone()
+    conn.close()
+    if not row or not row[0]:
+        return jsonify({"error": "No PDF on file."}), 404
+    disposition = "attachment" if request.args.get("download") else "inline"
+    return Response(bytes(row[0]), mimetype="application/pdf", headers={
+        "Content-Disposition": f'{disposition}; filename="Library_Analytics_Project_Report.pdf"'
+    })
+
+
+@app.route("/api/report/content", methods=["PUT"])
+@management_required
+def update_report_content():
+    data = request.get_json(force=True)
+    html = data.get("html") or ""
+    pdf_b64 = data.get("pdfBase64") or ""
+    if not html.strip() or not pdf_b64:
+        return jsonify({"error": "Report content and a rendered PDF are both required."}), 400
+
+    try:
+        pdf_bytes = base64.b64decode(pdf_b64)
+    except Exception:
+        return jsonify({"error": "The rendered PDF could not be read."}), 400
+
+    conn = get_conn()
+    cur = conn.cursor()
+    cur.execute("SELECT full_name FROM staff WHERE staff_id = %s", (request.user["staff_id"],))
+    row = cur.fetchone()
+    updated_by = row[0] if row else request.user.get("email")
+
+    cur.execute(
+        "INSERT INTO report_document (html_content, pdf_bytes, updated_by) VALUES (%s, %s, %s) "
+        "RETURNING updated_at",
+        (html, psycopg2.Binary(pdf_bytes), updated_by),
+    )
+    updated_at = cur.fetchone()[0]
+    conn.commit()
+    conn.close()
+    return jsonify({"ok": True, "updatedAt": updated_at.isoformat(), "updatedBy": updated_by})
 
 
 # ============================================================ GROUP (password-gated academic project info)

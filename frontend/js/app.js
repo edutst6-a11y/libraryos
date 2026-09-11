@@ -782,20 +782,134 @@ async function renderSlides() {
 
 // ============================================================ PROJECT REPORT
 async function renderReport() {
-  await bdpMount({
-    title: 'Project Report',
-    sub: 'The full written project report — problem statement, methodology, architecture, findings, and reflections. All 16 required sections, in order.',
-    badgeLabel: 'Answers assignment deliverable',
-    badgeText: '1. Project Report',
-    accent: false,
-    bodyHtml: `
-      <div class="doc-header">
-        <div class="doc-sub" style="color:#a9bcd4;"></div>
-        <a class="download-btn" href="/downloads/Library_Analytics_Project_Report.pdf" download>&#11015; Download PDF</a>
+  const account = getAccount();
+  const canEdit = account && account.accountType === 'staff';
+  let reportHtml = null;
+
+  async function drawViewing() {
+    await bdpMount({
+      title: 'Project Report',
+      sub: 'The full written project report — problem statement, methodology, architecture, findings, and reflections. All 16 required sections, in order.',
+      badgeLabel: 'Answers assignment deliverable',
+      badgeText: '1. Project Report',
+      accent: false,
+      bodyHtml: `
+        <div class="doc-header">
+          <div class="doc-sub" id="report-meta" style="color:#a9bcd4;"></div>
+          <div style="display:flex; gap:10px;">
+            ${canEdit ? `<button class="download-btn" id="report-edit-btn" type="button">&#9998; Edit</button>` : ''}
+            <a class="download-btn" href="${API_BASE}/api/report/pdf?download=1">&#11015; Download PDF</a>
+          </div>
+        </div>
+        <div class="bdp-panel" style="padding:12px;" id="report-view-area">
+          <iframe class="pdf-frame" id="report-pdf-frame" src="${API_BASE}/api/report/pdf?t=${Date.now()}" title="Project Report" style="border:none; border-radius:8px;"></iframe>
+        </div>`,
+    });
+    if (canEdit) {
+      document.getElementById('report-edit-btn').addEventListener('click', enterEditMode);
+    }
+  }
+
+  async function enterEditMode() {
+    const btn = document.getElementById('report-edit-btn');
+    btn.disabled = true;
+    btn.textContent = 'Loading document…';
+    try {
+      const meta = await api('/api/report/content');
+      reportHtml = meta.html;
+    } catch (err) {
+      alert('Could not load the report for editing: ' + err.message);
+      btn.disabled = false;
+      btn.textContent = '✎ Edit';
+      return;
+    }
+
+    const parser = new DOMParser();
+    const doc = parser.parseFromString(reportHtml, 'text/html');
+    const styleTag = doc.querySelector('style');
+    const bodyInner = doc.body.innerHTML;
+
+    const area = document.getElementById('report-view-area');
+    area.innerHTML = `
+      ${styleTag ? `<style>${styleTag.innerHTML}</style>` : ''}
+      <div style="margin-bottom:10px; display:flex; gap:8px; flex-wrap:wrap; align-items:center;">
+        <button type="button" data-cmd="bold" style="background:rgba(255,255,255,0.08); border:1px solid rgba(255,255,255,0.2); color:#fff; border-radius:6px; padding:6px 11px; font-weight:800; cursor:pointer;">B</button>
+        <button type="button" data-cmd="italic" style="background:rgba(255,255,255,0.08); border:1px solid rgba(255,255,255,0.2); color:#fff; border-radius:6px; padding:6px 11px; font-style:italic; cursor:pointer;">I</button>
+        <button type="button" data-cmd="underline" style="background:rgba(255,255,255,0.08); border:1px solid rgba(255,255,255,0.2); color:#fff; border-radius:6px; padding:6px 11px; text-decoration:underline; cursor:pointer;">U</button>
+        <span style="color:#93a8c2; font-size:11.5px; margin-left:4px;">Editing as a document. Click Save to turn it back into a PDF.</span>
+        <span style="flex:1;"></span>
+        <button type="button" id="report-cancel-btn" style="background:none; border:1px solid rgba(255,255,255,0.25); color:#d5e0ee; border-radius:8px; padding:9px 16px; cursor:pointer;">Cancel</button>
+        <button type="button" id="report-save-btn" class="download-btn">&#128190; Save as PDF</button>
       </div>
-      <div class="bdp-panel" style="padding:12px;">
-        <iframe class="pdf-frame" src="/downloads/Library_Analytics_Project_Report.pdf" title="Project Report" style="border:none; border-radius:8px;"></iframe>
-      </div>`,
+      <div id="report-editable" contenteditable="true"
+        style="background:#fff; color:#111; padding:30px 36px; border-radius:8px; max-height:640px; overflow-y:auto; line-height:1.5;">${bodyInner}</div>
+      <p id="report-save-status" style="color:#a9bcd4; font-size:12px; margin-top:10px;"></p>
+    `;
+    area.querySelectorAll('[data-cmd]').forEach(b => {
+      b.addEventListener('click', () => document.execCommand(b.dataset.cmd, false, null));
+    });
+    document.getElementById('report-cancel-btn').addEventListener('click', drawViewing);
+    document.getElementById('report-save-btn').addEventListener('click', saveEdits);
+  }
+
+  async function saveEdits() {
+    const statusEl = document.getElementById('report-save-status');
+    const saveBtn = document.getElementById('report-save-btn');
+    saveBtn.disabled = true;
+    try {
+      statusEl.textContent = 'Loading PDF engine…';
+      await loadHtml2Pdf();
+
+      const parser = new DOMParser();
+      const doc = parser.parseFromString(reportHtml, 'text/html');
+      doc.body.innerHTML = document.getElementById('report-editable').innerHTML;
+      const fullHtml = '<!DOCTYPE html>\n' + doc.documentElement.outerHTML;
+
+      statusEl.textContent = 'Converting back to PDF…';
+      const sourceEl = document.getElementById('report-editable');
+      const pdfBlob = await window.html2pdf().set({
+        margin: 12,
+        filename: 'Library_Analytics_Project_Report.pdf',
+        html2canvas: { scale: 2, useCORS: true },
+        jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' },
+        pagebreak: { mode: ['css', 'legacy'] },
+      }).from(sourceEl).outputPdf('blob');
+      const pdfBase64 = await blobToBase64(pdfBlob);
+
+      statusEl.textContent = 'Saving…';
+      await api('/api/report/content', {
+        method: 'PUT',
+        body: JSON.stringify({ html: fullHtml, pdfBase64 }),
+      });
+      await drawViewing();
+    } catch (err) {
+      statusEl.textContent = 'Could not save: ' + err.message;
+      saveBtn.disabled = false;
+    }
+  }
+
+  await drawViewing();
+}
+
+let html2pdfLoading = null;
+function loadHtml2Pdf() {
+  if (window.html2pdf) return Promise.resolve();
+  if (html2pdfLoading) return html2pdfLoading;
+  html2pdfLoading = new Promise((resolve, reject) => {
+    const s = document.createElement('script');
+    s.src = 'https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.14.0/html2pdf.bundle.min.js';
+    s.onload = resolve;
+    s.onerror = () => reject(new Error('Could not load the PDF engine.'));
+    document.head.appendChild(s);
+  });
+  return html2pdfLoading;
+}
+function blobToBase64(blob) {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onloadend = () => resolve(reader.result.split(',')[1]);
+    reader.onerror = reject;
+    reader.readAsDataURL(blob);
   });
 }
 
