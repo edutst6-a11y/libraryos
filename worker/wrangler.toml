@@ -1,0 +1,25 @@
+name = "libraryos-api"
+main = "src/index.ts"
+compatibility_date = "2024-09-23"
+compatibility_flags = ["nodejs_compat"]
+
+# Non-secret configuration. Override per-environment with `wrangler deploy --var`
+# or by editing this file once you know your real Pages URL.
+[vars]
+CORS_ALLOWED_ORIGIN = "https://libraryos.pages.dev"
+JWT_EXPIRY_HOURS = "24"
+DB_SCHEMA = "library"
+
+# Hyperdrive connects the Worker to the existing Postgres database (wherever
+# it's hosted) with pooling, so the Worker never opens a raw TCP connection
+# per-request the way the old Flask app did.
+#
+# Create it once with:
+#   npx wrangler hyperdrive create libraryos-db --connection-string="postgres://user:pass@host:5432/dbname"
+# then replace the placeholder id below with the id that command prints.
+[[hyperdrive]]
+binding = "HYPERDRIVE"
+id = "REPLACE_WITH_HYPERDRIVE_CONFIG_ID"
+
+# Secrets (never put these in this file -- set them with `wrangler secret put <NAME>`):
+#   JWT_SECRET

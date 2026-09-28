@@ -1,0 +1,2 @@
+JWT_SECRET=some-local-dev-secret
+CLOUDFLARE_HYPERDRIVE_LOCAL_CONNECTION_STRING_HYPERDRIVE=postgres://user:password@localhost:5432/libraryos

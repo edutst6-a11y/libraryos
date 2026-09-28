@@ -1,9 +1,12 @@
-// Auto-selects the API base URL by hostname: local dev talks to the local
-// Flask server, anything else (Vercel, etc.) talks to the deployed Render API.
+// Auto-selects the API base URL by hostname: local dev talks to a locally
+// running Worker (`npm run dev` inside worker/, defaults to port 8787),
+// anything else (Cloudflare Pages, a custom domain, etc.) talks to the
+// deployed Worker. Replace the placeholder below with your real Worker URL
+// once you've deployed it -- see docs/CLOUDFLARE_DEPLOYMENT.md.
 const API_BASE = (() => {
   const h = window.location.hostname;
-  if (h === "localhost" || h === "127.0.0.1") return "http://localhost:5055";
-  return "https://libraryos-api-ugsj.onrender.com";
+  if (h === "localhost" || h === "127.0.0.1") return "http://localhost:8787";
+  return "https://libraryos-api.YOUR_SUBDOMAIN.workers.dev";
 })();
 
 function getToken() { return localStorage.getItem("lo_token"); }
